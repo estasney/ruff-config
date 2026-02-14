@@ -1,5 +1,3 @@
-import './App.css'
-
 import {RuffConfigurator} from "./RuffConfigurator.tsx";
 
 function App() {
