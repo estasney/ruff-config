@@ -1,4 +1,4 @@
-import {RuffConfigurator} from "./RuffConfigurator.tsx";
+import {RuffConfigurator} from "./RuffConfigurator";
 
 function App() {
   return <RuffConfigurator />

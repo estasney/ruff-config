@@ -1,26 +1,15 @@
 import { useEffect,useMemo, useState } from 'react';
 
-import RULE_GROUPS from '~/assets/rule_groups.json';
-
-type TRule = {
-  code: string;
-  name: string;
-  description: string;
-};
-
-type TRuleGroup = {
-  name: string;
-  rules: TRule[];
-};
-
-type TRuleGroups = Record<string, TRuleGroup>;
+import ruleset from 'virtual:ruff-rules';
+import type { TRule, TRuleGroup } from '~/domain/rule';
 
 type TRuleState = 'selected' | 'ignored' | 'unselected';
 type TGroupState = TRuleState | 'mixed';
 type TRuleStates = Record<string, TRuleState>;
 type TExpandedGroups = Set<string>;
 
-const TYPED_RULE_GROUPS = RULE_GROUPS as TRuleGroups;
+const { ruffVersion, groups: TYPED_RULE_GROUPS } = ruleset;
+
 
 function useDebounceState<T>(initialValue: T, delay: number): [T, T, (value: T) => void] {
   const [value, setValue] = useState<T>(initialValue);
@@ -66,9 +55,9 @@ interface IStateIcon {
 }
 
 const StateIcon = ({ state }: IStateIcon) => {
-  if (state === 'selected') return <span className="text-green-600 font-bold">✓</span>;
-  if (state === 'ignored') return <span className="text-red-600 font-bold">✗</span>;
-  return <span className="text-gray-300">○</span>;
+  if (state === 'selected') return <span className="text-green-400 font-bold">✓</span>;
+  if (state === 'ignored') return <span className="text-red-400 font-bold">✗</span>;
+  return <span className="text-gray-600">○</span>;
 };
 
 interface ITriStateCheckbox {
@@ -90,7 +79,7 @@ const TriStateCheckbox = ({ state, onChange, label, isGroup = false }: ITriState
   return (
     <button
       onClick={cycleState}
-      className={`flex items-center gap-2 text-left w-full px-2 py-1 rounded hover:bg-gray-100 ${isGroup ? 'font-semibold' : ''}`}
+      className={`flex items-center gap-2 text-left w-full px-2 py-1 rounded hover:bg-gray-700 ${isGroup ? 'font-semibold' : ''}`}
     >
       <StateIcon state={displayState} />
       {label && <span className="truncate">{label}</span>}
@@ -209,29 +198,26 @@ export function RuffConfigurator() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-900 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Ruff Rules Configurator</h1>
-          <p className="text-gray-600 mb-4">
-            Click rules to cycle: <span className="text-gray-400">○</span> Unselected → 
-            <span className="text-green-600 font-bold ml-1">✓</span> Selected → 
-            <span className="text-red-600 font-bold ml-1">✗</span> Ignored
-          </p>
-          
+        <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-4">
+          <div className="flex items-baseline gap-3 mb-2">
+            <h1 className="text-2xl font-bold text-gray-100">Ruff Rules Configurator</h1>
+            <span className="text-sm text-gray-500">ruff {ruffVersion}</span>
+          </div>
           <div className="flex flex-wrap gap-4 items-center mb-4">
             <input
               type="text"
               placeholder="Search rules..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 min-w-64 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 min-w-64 px-4 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <div className="flex gap-2">
-              <button onClick={expandAll} className="px-3 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200">
+              <button onClick={expandAll} className="px-3 py-2 text-sm bg-gray-700 text-gray-200 rounded hover:bg-gray-600">
                 Expand All
               </button>
-              <button onClick={collapseAll} className="px-3 py-2 text-sm bg-gray-100 rounded hover:bg-gray-200">
+              <button onClick={collapseAll} className="px-3 py-2 text-sm bg-gray-700 text-gray-200 rounded hover:bg-gray-600">
                 Collapse All
               </button>
               <button
@@ -246,21 +232,21 @@ export function RuffConfigurator() {
             </div>
           </div>
 
-          <div className="flex gap-6 text-sm text-gray-600">
+          <div className="flex gap-6 text-sm text-gray-300">
             <span>Total: <strong>{stats.total}</strong></span>
-            <span className="text-green-600">Selected: <strong>{stats.selected}</strong></span>
-            <span className="text-red-600">Ignored: <strong>{stats.ignored}</strong></span>
+            <span className="text-green-400">Selected: <strong>{stats.selected}</strong></span>
+            <span className="text-red-400">Ignored: <strong>{stats.ignored}</strong></span>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           {filteredGroups.map(([groupCode, group]) => {
             const groupState = getGroupState(groupCode);
             const isExpanded = expandedGroups.has(groupCode);
 
             return (
-              <div key={groupCode} className="border-b last:border-b-0">
-                <div className="flex items-center bg-gray-50 hover:bg-gray-100">
+              <div key={groupCode} className="border-b border-gray-700 last:border-b-0">
+                <div className="flex items-center bg-gray-700/40 hover:bg-gray-700">
                   <div className="w-12 shrink-0">
                     <TriStateCheckbox
                       state={groupState === 'mixed' ? 'unselected' : groupState}
@@ -273,19 +259,19 @@ export function RuffConfigurator() {
                     className="flex-1 flex items-center justify-between px-4 py-3 text-left"
                   >
                     <div>
-                      <span className="font-mono font-bold text-blue-600">{groupCode}</span>
-                      <span className="mx-2 text-gray-400">—</span>
-                      <span className="text-gray-700">{group.name}</span>
-                      <span className="ml-2 text-sm text-gray-400">({group.rules.length} rules)</span>
+                      <span className="font-mono font-bold text-blue-400">{groupCode}</span>
+                      <span className="mx-2 text-gray-500">—</span>
+                      <span className="text-gray-200">{group.name}</span>
+                      <span className="ml-2 text-sm text-gray-500">({group.rules.length} rules)</span>
                     </div>
-                    <span className="text-gray-400">{isExpanded ? '▼' : '▶'}</span>
+                    <span className="text-gray-500">{isExpanded ? '▼' : '▶'}</span>
                   </button>
                 </div>
 
                 {isExpanded && (
-                  <div className="border-t bg-white">
+                  <div className="border-t border-gray-700 bg-gray-800">
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-50 text-left text-gray-600">
+                      <thead className="bg-gray-700/40 text-left text-gray-300">
                         <tr>
                           <th className="w-12 px-2 py-2"></th>
                           <th className="w-28 px-3 py-2 font-medium">Code</th>
@@ -295,20 +281,20 @@ export function RuffConfigurator() {
                       </thead>
                       <tbody>
                         {group.rules.map((rule: TRule) => (
-                          <tr key={rule.code} className="border-t hover:bg-gray-50">
+                          <tr key={rule.code} className="border-t border-gray-700 hover:bg-gray-700/40">
                             <td className="px-2 py-1">
                               <TriStateCheckbox
                                 state={ruleStates[rule.code] || 'unselected'}
                                 onChange={(newState) => setRuleState(rule.code, newState)}
                               />
                             </td>
-                            <td className="px-3 py-2 font-mono text-blue-600 font-medium">
+                            <td className="px-3 py-2 font-mono text-blue-400 font-medium">
                               {rule.code}
                             </td>
-                            <td className="px-3 py-2 font-mono text-gray-700 text-xs">
+                            <td className="px-3 py-2 font-mono text-gray-300 text-xs">
                               {rule.name}
                             </td>
-                            <td className="px-3 py-2 text-gray-600">
+                            <td className="px-3 py-2 text-gray-400">
                               {rule.description}
                             </td>
                           </tr>
@@ -323,18 +309,18 @@ export function RuffConfigurator() {
         </div>
 
         {filteredGroups.length === 0 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center text-gray-500">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8 text-center text-gray-400">
             No rules match your search.
           </div>
         )}
       </div>
 
       {showConfig && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-lg font-bold">Generated Configuration</h2>
-              <button onClick={() => setShowConfig(false)} className="text-gray-500 hover:text-gray-700 text-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h2 className="text-lg font-bold text-gray-100">Generated Configuration</h2>
+              <button onClick={() => setShowConfig(false)} className="text-gray-400 hover:text-gray-200 text-2xl">
                 ×
               </button>
             </div>
@@ -343,10 +329,10 @@ export function RuffConfigurator() {
                 {generateConfig()}
               </pre>
             </div>
-            <div className="p-4 border-t flex justify-end gap-2">
+            <div className="p-4 border-t border-gray-700 flex justify-end gap-2">
               <button
                 onClick={() => setShowConfig(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-gray-300 hover:text-gray-100"
               >
                 Close
               </button>

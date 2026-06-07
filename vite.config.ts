@@ -3,10 +3,12 @@ import react from '@vitejs/plugin-react'
 import {fileURLToPath} from "node:url";
 import { viteSingleFile } from "vite-plugin-singlefile";
 
+import { ruffRules } from "./plugins/ruffRules";
+
 // https://vite.dev/config/
 export default defineConfig({
   base: "./",
-  plugins: [react(), viteSingleFile()],
+  plugins: [react(), ruffRules(), viteSingleFile()],
   assetsInclude: ["./src/assets/**"],
   resolve: {
     alias: {

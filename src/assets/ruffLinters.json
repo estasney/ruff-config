@@ -1,0 +1,323 @@
+[
+  {
+    "prefix": "AIR",
+    "name": "Airflow",
+    "url": "https://pypi.org/project/apache-airflow/"
+  },
+  {
+    "prefix": "ERA",
+    "name": "eradicate",
+    "url": "https://pypi.org/project/eradicate/"
+  },
+  {
+    "prefix": "FAST",
+    "name": "FastAPI",
+    "url": "https://pypi.org/project/fastapi/"
+  },
+  {
+    "prefix": "YTT",
+    "name": "flake8-2020",
+    "url": "https://pypi.org/project/flake8-2020/"
+  },
+  {
+    "prefix": "ANN",
+    "name": "flake8-annotations",
+    "url": "https://pypi.org/project/flake8-annotations/"
+  },
+  {
+    "prefix": "ASYNC",
+    "name": "flake8-async",
+    "url": "https://pypi.org/project/flake8-async/"
+  },
+  {
+    "prefix": "S",
+    "name": "flake8-bandit",
+    "url": "https://pypi.org/project/flake8-bandit/"
+  },
+  {
+    "prefix": "BLE",
+    "name": "flake8-blind-except",
+    "url": "https://pypi.org/project/flake8-blind-except/"
+  },
+  {
+    "prefix": "FBT",
+    "name": "flake8-boolean-trap",
+    "url": "https://pypi.org/project/flake8-boolean-trap/"
+  },
+  {
+    "prefix": "B",
+    "name": "flake8-bugbear",
+    "url": "https://pypi.org/project/flake8-bugbear/"
+  },
+  {
+    "prefix": "A",
+    "name": "flake8-builtins",
+    "url": "https://pypi.org/project/flake8-builtins/"
+  },
+  {
+    "prefix": "COM",
+    "name": "flake8-commas",
+    "url": "https://pypi.org/project/flake8-commas/"
+  },
+  {
+    "prefix": "C4",
+    "name": "flake8-comprehensions",
+    "url": "https://pypi.org/project/flake8-comprehensions/"
+  },
+  {
+    "prefix": "CPY",
+    "name": "flake8-copyright",
+    "url": "https://pypi.org/project/flake8-copyright/"
+  },
+  {
+    "prefix": "DTZ",
+    "name": "flake8-datetimez",
+    "url": "https://pypi.org/project/flake8-datetimez/"
+  },
+  {
+    "prefix": "T10",
+    "name": "flake8-debugger",
+    "url": "https://pypi.org/project/flake8-debugger/"
+  },
+  {
+    "prefix": "DJ",
+    "name": "flake8-django",
+    "url": "https://pypi.org/project/flake8-django/"
+  },
+  {
+    "prefix": "EM",
+    "name": "flake8-errmsg",
+    "url": "https://pypi.org/project/flake8-errmsg/"
+  },
+  {
+    "prefix": "EXE",
+    "name": "flake8-executable",
+    "url": "https://pypi.org/project/flake8-executable/"
+  },
+  {
+    "prefix": "FIX",
+    "name": "flake8-fixme",
+    "url": "https://github.com/tommilligan/flake8-fixme"
+  },
+  {
+    "prefix": "FA",
+    "name": "flake8-future-annotations",
+    "url": "https://pypi.org/project/flake8-future-annotations/"
+  },
+  {
+    "prefix": "INT",
+    "name": "flake8-gettext",
+    "url": "https://pypi.org/project/flake8-gettext/"
+  },
+  {
+    "prefix": "ISC",
+    "name": "flake8-implicit-str-concat",
+    "url": "https://pypi.org/project/flake8-implicit-str-concat/"
+  },
+  {
+    "prefix": "ICN",
+    "name": "flake8-import-conventions",
+    "url": "https://github.com/joaopalmeiro/flake8-import-conventions"
+  },
+  {
+    "prefix": "LOG",
+    "name": "flake8-logging",
+    "url": "https://pypi.org/project/flake8-logging/"
+  },
+  {
+    "prefix": "G",
+    "name": "flake8-logging-format",
+    "url": "https://pypi.org/project/flake8-logging-format/"
+  },
+  {
+    "prefix": "INP",
+    "name": "flake8-no-pep420",
+    "url": "https://pypi.org/project/flake8-no-pep420/"
+  },
+  {
+    "prefix": "PIE",
+    "name": "flake8-pie",
+    "url": "https://pypi.org/project/flake8-pie/"
+  },
+  {
+    "prefix": "T20",
+    "name": "flake8-print",
+    "url": "https://pypi.org/project/flake8-print/"
+  },
+  {
+    "prefix": "PYI",
+    "name": "flake8-pyi",
+    "url": "https://pypi.org/project/flake8-pyi/"
+  },
+  {
+    "prefix": "PT",
+    "name": "flake8-pytest-style",
+    "url": "https://pypi.org/project/flake8-pytest-style/"
+  },
+  {
+    "prefix": "Q",
+    "name": "flake8-quotes",
+    "url": "https://pypi.org/project/flake8-quotes/"
+  },
+  {
+    "prefix": "RSE",
+    "name": "flake8-raise",
+    "url": "https://pypi.org/project/flake8-raise/"
+  },
+  {
+    "prefix": "RET",
+    "name": "flake8-return",
+    "url": "https://pypi.org/project/flake8-return/"
+  },
+  {
+    "prefix": "SLF",
+    "name": "flake8-self",
+    "url": "https://pypi.org/project/flake8-self/"
+  },
+  {
+    "prefix": "SIM",
+    "name": "flake8-simplify",
+    "url": "https://pypi.org/project/flake8-simplify/"
+  },
+  {
+    "prefix": "SLOT",
+    "name": "flake8-slots",
+    "url": "https://pypi.org/project/flake8-slots/"
+  },
+  {
+    "prefix": "TID",
+    "name": "flake8-tidy-imports",
+    "url": "https://pypi.org/project/flake8-tidy-imports/"
+  },
+  {
+    "prefix": "TD",
+    "name": "flake8-todos",
+    "url": "https://github.com/orsinium-labs/flake8-todos/"
+  },
+  {
+    "prefix": "TC",
+    "name": "flake8-type-checking",
+    "url": "https://pypi.org/project/flake8-type-checking/"
+  },
+  {
+    "prefix": "ARG",
+    "name": "flake8-unused-arguments",
+    "url": "https://pypi.org/project/flake8-unused-arguments/"
+  },
+  {
+    "prefix": "PTH",
+    "name": "flake8-use-pathlib",
+    "url": "https://pypi.org/project/flake8-use-pathlib/"
+  },
+  {
+    "prefix": "FLY",
+    "name": "flynt",
+    "url": "https://pypi.org/project/flynt/"
+  },
+  {
+    "prefix": "I",
+    "name": "isort",
+    "url": "https://pypi.org/project/isort/"
+  },
+  {
+    "prefix": "C90",
+    "name": "mccabe",
+    "url": "https://pypi.org/project/mccabe/"
+  },
+  {
+    "prefix": "NPY",
+    "name": "NumPy-specific rules"
+  },
+  {
+    "prefix": "PD",
+    "name": "pandas-vet",
+    "url": "https://pypi.org/project/pandas-vet/"
+  },
+  {
+    "prefix": "N",
+    "name": "pep8-naming",
+    "url": "https://pypi.org/project/pep8-naming/"
+  },
+  {
+    "prefix": "PERF",
+    "name": "Perflint",
+    "url": "https://pypi.org/project/perflint/"
+  },
+  {
+    "prefix": "",
+    "name": "pycodestyle",
+    "url": "https://pypi.org/project/pycodestyle/",
+    "categories": [
+      {
+        "prefix": "E",
+        "name": "Error"
+      },
+      {
+        "prefix": "W",
+        "name": "Warning"
+      }
+    ]
+  },
+  {
+    "prefix": "DOC",
+    "name": "pydoclint",
+    "url": "https://pypi.org/project/pydoclint/"
+  },
+  {
+    "prefix": "D",
+    "name": "pydocstyle",
+    "url": "https://pypi.org/project/pydocstyle/"
+  },
+  {
+    "prefix": "F",
+    "name": "Pyflakes",
+    "url": "https://pypi.org/project/pyflakes/"
+  },
+  {
+    "prefix": "PGH",
+    "name": "pygrep-hooks",
+    "url": "https://github.com/pre-commit/pygrep-hooks"
+  },
+  {
+    "prefix": "PL",
+    "name": "Pylint",
+    "url": "https://pypi.org/project/pylint/",
+    "categories": [
+      {
+        "prefix": "C",
+        "name": "Convention"
+      },
+      {
+        "prefix": "E",
+        "name": "Error"
+      },
+      {
+        "prefix": "R",
+        "name": "Refactor"
+      },
+      {
+        "prefix": "W",
+        "name": "Warning"
+      }
+    ]
+  },
+  {
+    "prefix": "UP",
+    "name": "pyupgrade",
+    "url": "https://pypi.org/project/pyupgrade/"
+  },
+  {
+    "prefix": "FURB",
+    "name": "refurb",
+    "url": "https://pypi.org/project/refurb/"
+  },
+  {
+    "prefix": "RUF",
+    "name": "Ruff-specific rules"
+  },
+  {
+    "prefix": "TRY",
+    "name": "tryceratops",
+    "url": "https://pypi.org/project/tryceratops/"
+  }
+]
