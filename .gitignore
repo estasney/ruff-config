@@ -21,3 +21,4 @@ dist-ssr
 !.gitattributes
 .*
 !docs
+!*.nojekyll
