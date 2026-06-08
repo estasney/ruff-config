@@ -63,13 +63,12 @@ export default tseslint.config(
                     "ts-check": false,
                 },
             ],
-
+            "@typescript-eslint/switch-exhaustiveness-check": "error",
             "no-unused-expressions": "off",
             "@typescript-eslint/no-unused-expressions": [
                 "error",
                 {allowShortCircuit: true, allowTernary: true},
             ],
-            "no-console": "warn",
             "react/prop-types": "off",
             "react/self-closing-comp": "error",
             "react/jsx-boolean-value": ["error", "never"],
@@ -87,16 +86,6 @@ export default tseslint.config(
             "react-hooks/exhaustive-deps": ["error"],
 
         },
-    },
-
-    {
-        files: ["plugins/**/*.ts"],
-        languageOptions: {globals: {...globals.node}},
-        rules: [
-            {
-                "no-console": "off"
-            }
-        ]
     },
 
     eslintConfigPrettier,
