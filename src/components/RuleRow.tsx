@@ -20,7 +20,7 @@ export const RuleRow = ({rule, state, onChange}: IRuleRowProps) => {
 
     return (
         <tr className="border-t border-gray-700 hover:bg-gray-700/40">
-            <td className="px-2 py-1">
+            <td className="px-2 py-1 text-center">
                 <TriStateCheckbox state={state} onChange={handleChange} />
             </td>
             <td className="px-3 py-2 font-mono text-blue-400 font-medium">{rule.code}</td>

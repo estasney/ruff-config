@@ -75,7 +75,6 @@ export const RuffConfigurator = () => {
                     <div className="flex gap-6 text-sm text-gray-300">
                         <span>Total: <strong>{stats.total}</strong></span>
                         <span className="text-green-400">Selected: <strong>{stats.selected}</strong></span>
-                        <span className="text-red-400">Ignored: <strong>{stats.ignored}</strong></span>
                     </div>
                 </div>
 

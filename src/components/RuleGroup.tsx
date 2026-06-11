@@ -40,12 +40,12 @@ export const RuleGroup = ({
     return (
         <div className="border-b border-gray-700 last:border-b-0">
             <div className="flex items-center bg-gray-700/40 hover:bg-gray-700">
-                <div className="w-12 shrink-0">
-                    <TriStateCheckbox state={groupState} onChange={handleGroupChange} className="font-semibold" />
+                <div className="w-12 shrink-0 flex justify-center">
+                    <TriStateCheckbox state={groupState} onChange={handleGroupChange} />
                 </div>
                 <button
                     onClick={handleToggle}
-                    className="flex-1 flex items-center justify-between px-4 py-3 text-left"
+                    className="flex-1 flex items-center justify-between px-4 py-3 text-left cursor-pointer"
                 >
                     <div>
                         <span className="font-mono font-bold text-blue-400">{groupCode}</span>
@@ -53,7 +53,7 @@ export const RuleGroup = ({
                         <span className="text-gray-200">{group.name}</span>
                         <span className="ml-2 text-sm text-gray-500">({group.rules.length} rules)</span>
                     </div>
-                    <span className="text-gray-500">{isExpanded ? '▼' : '▶'}</span>
+                    <span className="text-gray-500">{isExpanded ? '▾' : '▸'}</span>
                 </button>
             </div>
 

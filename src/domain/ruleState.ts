@@ -1,24 +1,22 @@
 import type {TRule, TRuleGroup, TRuleGroups} from "~/domain/rule";
 
-export type TRuleState = 'selected' | 'ignored' | 'unselected';
-export type TGroupState = TRuleState | 'mixed';
+export type TRuleState = 'on' | 'off';
+export type TGroupState = TRuleState | 'indeterminate';
 export type TRuleStates = Partial<Record<string, TRuleState>>;
 
 export interface IRuleStats {
     selected: number;
-    ignored: number;
     total: number;
 }
 
 export const ruleStateOf = (states: TRuleStates, code: string): TRuleState =>
-    states[code] ?? 'unselected';
+    states[code] ?? 'off';
 
 export const deriveGroupState = (rules: TRule[], states: TRuleStates): TGroupState => {
     const groupStates = rules.map((rule) => ruleStateOf(states, rule.code));
-    if (groupStates.every((s) => s === 'selected')) return 'selected';
-    if (groupStates.every((s) => s === 'ignored')) return 'ignored';
-    if (groupStates.every((s) => s === 'unselected')) return 'unselected';
-    return 'mixed';
+    if (groupStates.every((s) => s === 'on')) return 'on';
+    if (groupStates.every((s) => s === 'off')) return 'off';
+    return 'indeterminate';
 };
 
 export const countRules = (groups: TRuleGroups): number =>
@@ -26,12 +24,10 @@ export const countRules = (groups: TRuleGroups): number =>
 
 export const countRuleStates = (states: TRuleStates, total: number): IRuleStats => {
     let selected = 0;
-    let ignored = 0;
     for (const state of Object.values(states)) {
-        if (state === 'selected') selected++;
-        else if (state === 'ignored') ignored++;
+        if (state === 'on') selected++;
     }
-    return {selected, ignored, total};
+    return {selected, total};
 };
 
 export const filterGroups = (groups: TRuleGroups, term: string): [string, TRuleGroup][] => {
@@ -59,17 +55,28 @@ export const generateConfig = (groups: TRuleGroups, states: TRuleStates): string
     const ignored: string[] = [];
 
     for (const [groupCode, group] of Object.entries(groups)) {
-        const groupState = deriveGroupState(group.rules, states);
-        if (groupState === 'selected') {
+        const onCodes: string[] = [];
+        const offCodes: string[] = [];
+        for (const rule of group.rules) {
+            if (ruleStateOf(states, rule.code) === 'on') onCodes.push(rule.code);
+            else offCodes.push(rule.code);
+        }
+
+        if (onCodes.length === 0) continue;
+
+        if (offCodes.length === 0) {
             selected.push(groupCode);
-        } else if (groupState === 'ignored') {
-            ignored.push(groupCode);
+            continue;
+        }
+
+        // Partial group: spell it whichever way is shorter. Either the chosen
+        // rules listed directly, or the whole group minus the rules left off.
+        // The group form also keeps any rules Ruff later adds to the group on.
+        if (1 + offCodes.length < onCodes.length) {
+            selected.push(groupCode);
+            ignored.push(...offCodes);
         } else {
-            for (const rule of group.rules) {
-                const state = states[rule.code];
-                if (state === 'selected') selected.push(rule.code);
-                else if (state === 'ignored') ignored.push(rule.code);
-            }
+            selected.push(...onCodes);
         }
     }
 

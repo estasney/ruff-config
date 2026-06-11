@@ -25,7 +25,7 @@ interface IUseRuleStates {
 }
 
 export const useRuleStates = (): IUseRuleStates => {
-    const [storedRuleStates, setStoredRuleStates] = useLocalStorage<TRuleStates>({key: 'ruffRuleStates', initialValue: {}});
+    const [storedRuleStates, setStoredRuleStates] = useLocalStorage<TRuleStates>({key: 'ruffRuleStates.v2', initialValue: {}});
     const [ruleStates, setRuleStates] = useState<TRuleStates>(storedRuleStates);
 
     const totalRules = useMemo(() => countRules(groups), []);
