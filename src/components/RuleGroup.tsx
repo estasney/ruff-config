@@ -45,15 +45,15 @@ export const RuleGroup = ({
                 </div>
                 <button
                     onClick={handleToggle}
-                    className="flex-1 flex items-center justify-between px-4 py-3 text-left cursor-pointer"
+                    className="flex-1 flex items-center justify-between px-4 py-3 text-left text-sm"
                 >
                     <div>
                         <span className="font-mono font-bold text-blue-400">{groupCode}</span>
                         <span className="mx-2 text-gray-500">—</span>
                         <span className="text-gray-200">{group.name}</span>
-                        <span className="ml-2 text-sm text-gray-500">({group.rules.length} rules)</span>
+                        <span className="ml-2 text-xs text-gray-500">({group.rules.length} rules)</span>
                     </div>
-                    <span className="text-gray-500">{isExpanded ? '▾' : '▸'}</span>
+                    <span className="font-sans text-base text-gray-500">{isExpanded ? '▾' : '▸'}</span>
                 </button>
             </div>
 

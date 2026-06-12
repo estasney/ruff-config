@@ -29,6 +29,8 @@ export const rulesetSchema = z.object({
   groups: ruleGroupsSchema,
 });
 
+export const ruleDocsUrl = (rule: TRule) => `https://docs.astral.sh/ruff/rules/${rule.name}/`;
+
 export type TRule = z.infer<typeof ruleSchema>;
 export type TRuleGroup = z.infer<typeof ruleGroupSchema>;
 export type TRuleGroups = z.infer<typeof ruleGroupsSchema>;

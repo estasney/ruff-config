@@ -12,10 +12,11 @@ type TExpandedGroups = Set<string>;
 const {ruffVersion} = ruleset;
 
 export const RuffConfigurator = () => {
-    const {groups, ruleStates, stats, getConfig, setRuleState, setGroupState, persist} = useRuleStates();
+    const {groups, ruleStates, stats, getConfig, setRuleState, setGroupState, droppedCodes} = useRuleStates();
     const {searchTerm, filteredGroups, onSearchChange} = useGroupSearch(groups);
     const [expandedGroups, setExpandedGroups] = useState<TExpandedGroups>(() => new Set());
     const [showConfig, setShowConfig] = useState(false);
+    const [dropNoticeDismissed, setDropNoticeDismissed] = useState(false);
 
     const toggleGroup = useCallback((groupCode: string) => {
         setExpandedGroups((prev) => {
@@ -35,9 +36,12 @@ export const RuffConfigurator = () => {
     }, []);
 
     const openConfig = useCallback(() => {
-        persist();
         setShowConfig(true);
-    }, [persist]);
+    }, []);
+
+    const dismissDropNotice = useCallback(() => {
+        setDropNoticeDismissed(true);
+    }, []);
 
     const closeConfig = useCallback(() => {
         setShowConfig(false);
@@ -77,6 +81,18 @@ export const RuffConfigurator = () => {
                         <span className="text-green-400">Selected: <strong>{stats.selected}</strong></span>
                     </div>
                 </div>
+
+                {droppedCodes.length > 0 && !dropNoticeDismissed ? (
+                    <div className="bg-amber-950 border border-amber-700 rounded-lg p-4 mb-4 flex items-start justify-between gap-4 text-sm text-amber-200">
+                        <span>
+                            Your saved selection included {droppedCodes.length === 1 ? 'a rule that no longer exists' : `${String(droppedCodes.length)} rules that no longer exist`} in
+                            ruff {ruffVersion} and was updated: {droppedCodes.join(', ')}
+                        </span>
+                        <button onClick={dismissDropNotice} className="px-3 py-1 border border-amber-700 rounded hover:bg-amber-900 shrink-0">
+                            Dismiss
+                        </button>
+                    </div>
+                ) : null}
 
                 <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                     {filteredGroups.map(([groupCode, group]) => (
