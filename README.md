@@ -16,13 +16,12 @@ grouping transform at build time:
 | `ruffLinters.json` | `ruff linter --output-format json` |
 | `ruffVersion.json` | `ruff version --output-format json`, filtered to `version` |
 
-To update, regenerate all three assets:
+To update, run `make assets` (regenerates all three), then `make build`.
 
-```bash
-ruff rule --all --output-format json > src/assets/ruffRules.json
-ruff linter --output-format json > src/assets/ruffLinters.json
-ruff version --output-format json | jq '{version}' > src/assets/ruffVersion.json
-```
+Releases are separate: `make version-patch` (or `version-minor`,
+`version-major`) bumps `package.json` and `package-lock.json`, commits only
+those two files as `vX.Y.Z`, and creates an annotated tag `vX.Y.Z` noting the
+bundled ruff data version. It refuses to run on a dirty working tree.
 
 Keep all three regenerated from the same ruff release. `ruffLinters.json` is the
 source of truth for selector keys: each linter's non-empty `prefix` is its
