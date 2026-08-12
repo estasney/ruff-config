@@ -51,9 +51,9 @@ export const RuleGroup = ({
                         <span className="font-mono font-bold text-blue-400">{groupCode}</span>
                         <span className="mx-2 text-gray-500">—</span>
                         <span className="text-gray-200">{group.name}</span>
-                        <span className="ml-2 text-xs text-gray-500">({group.rules.length} rules)</span>
+                        <span className="ml-2 text-xs text-gray-400">({group.rules.length} rules)</span>
                     </div>
-                    <span className="font-sans text-base text-gray-500">{isExpanded ? '▾' : '▸'}</span>
+                    <span className="font-sans text-base text-gray-400">{isExpanded ? '▾' : '▸'}</span>
                 </button>
             </div>
 

@@ -14,16 +14,15 @@ grouping transform at build time:
 | --- | --- |
 | `ruffRules.json` | `ruff rule --all --output-format json` |
 | `ruffLinters.json` | `ruff linter --output-format json` |
-| `ruffVersion.json` | `{ "version": "<ruff --version>" }` |
+| `ruffVersion.json` | `ruff version --output-format json`, filtered to `version` |
 
-To update, regenerate the two JSON exports and record the ruff version:
+To update, regenerate all three assets:
 
 ```bash
 ruff rule --all --output-format json > src/assets/ruffRules.json
 ruff linter --output-format json > src/assets/ruffLinters.json
+ruff version --output-format json | jq '{version}' > src/assets/ruffVersion.json
 ```
-
-Then set `ruffVersion.json` to the ruff version you used, e.g. `{ "version": "0.15.15" }`.
 
 Keep all three regenerated from the same ruff release. `ruffLinters.json` is the
 source of truth for selector keys: each linter's non-empty `prefix` is its

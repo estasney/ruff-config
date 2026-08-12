@@ -53,7 +53,7 @@ export const RuffConfigurator = () => {
                 <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-4">
                     <div className="flex items-baseline gap-3 mb-2">
                         <h1 className="text-2xl font-bold text-gray-100">Ruff Rules Configurator</h1>
-                        <span className="text-sm text-gray-500">ruff {ruffVersion}</span>
+                        <span className="text-sm text-gray-400">ruff {ruffVersion}</span>
                     </div>
                     <div className="flex flex-wrap gap-4 items-center mb-4">
                         <input
