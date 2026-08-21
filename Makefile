@@ -8,6 +8,7 @@ assets:
 	ruff rule --all --output-format json > $(ASSETS)/ruffRules.json
 	ruff linter --output-format json > $(ASSETS)/ruffLinters.json
 	ruff version --output-format json | jq '{version}' > $(ASSETS)/ruffVersion.json
+	git add src/assets
 
 # Type-check and build the single-file page into docs/.
 build:
