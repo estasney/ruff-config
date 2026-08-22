@@ -5,9 +5,14 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 
 import { ruffRules } from "./plugins/ruffRules";
 
+const buildDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
 // https://vite.dev/config/
 export default defineConfig({
   base: "./",
+  define: {
+    __BUILD_DATE__: JSON.stringify(buildDate),
+  },
   plugins: [react(), ruffRules(), viteSingleFile()],
   assetsInclude: ["./src/assets/**"],
   resolve: {

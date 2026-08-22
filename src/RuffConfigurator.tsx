@@ -54,6 +54,7 @@ export const RuffConfigurator = () => {
                     <div className="flex items-baseline gap-3 mb-2">
                         <h1 className="text-2xl font-bold text-gray-100">Ruff Rules Configurator</h1>
                         <span className="text-sm text-gray-400">ruff {ruffVersion}</span>
+                        <span className="text-sm text-gray-400">Built: {__BUILD_DATE__}</span>
                     </div>
                     <div className="flex flex-wrap gap-4 items-center mb-4">
                         <input
