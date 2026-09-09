@@ -16,10 +16,11 @@ const sourceLocationSchema = z.object({
   line: z.number(),
 });
 
+// code/linter are null until ruff assigns them (unselectable preview rules).
 export const ruffRuleSchema = z.object({
   name: z.string(),
-  code: z.string(),
-  linter: z.string(),
+  code: z.string().nullable(),
+  linter: z.string().nullable(),
   summary: z.string(),
   fix: z.string(),
   fix_availability: z.enum(['Always', 'None', 'Sometimes']),

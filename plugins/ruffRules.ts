@@ -18,7 +18,12 @@ const RULES_PATH = resolve(ASSETS, 'ruffRules.json');
 const LINTERS_PATH = resolve(ASSETS, 'ruffLinters.json');
 const VERSION_PATH = resolve(ASSETS, 'ruffVersion.json');
 
-const toRule = (raw: TRuffRule): TRule => {
+type TCodedRuffRule = TRuffRule & { code: string; linter: string };
+
+const isCoded = (rule: TRuffRule): rule is TCodedRuffRule =>
+  rule.code !== null && rule.linter !== null;
+
+const toRule = (raw: TCodedRuffRule): TRule => {
   const [kind, since] = Object.entries(raw.status)[0] as [TRule['status']['kind'], { since: string }];
   return {
     code: raw.code,
@@ -43,7 +48,7 @@ interface TGroupIdentity {
 // ("") yields E, W and Pylint ("PL") yields PLC, PLE, PLR, PLW. Rule codes carry
 // that full prefix (PLC0105), so categories are matched on linter.prefix +
 // category.prefix. Linters without categories use their prefix directly.
-const groupFor = (rule: TRuffRule, linters: Map<string, TRuffLinter>): TGroupIdentity => {
+const groupFor = (rule: TCodedRuffRule, linters: Map<string, TRuffLinter>): TGroupIdentity => {
   const linter = linters.get(rule.linter);
   invariant(linter, `no linter metadata for ${rule.linter}`);
 
@@ -65,7 +70,7 @@ const buildRuleset = (
   const linters = new Map(rawLinters.map((l) => [l.name, l] as const));
   const groups = new Map<string, TRuleGroup>();
 
-  for (const rule of rawRules) {
+  for (const rule of rawRules.filter(isCoded)) {
     const { key, name } = groupFor(rule, linters);
     const existing = groups.get(key);
     if (existing) {
