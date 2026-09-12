@@ -11,8 +11,9 @@ assets:
 	git add src/assets
 
 # Type-check and build the single-file page into docs/.
-build:
+build: assets
 	npm run build
+	git add docs
 
 check-clean:
 	@test -z "$$(git status --porcelain)" || { echo "Git tree is dirty."; exit 1; }
