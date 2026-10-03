@@ -1,7 +1,12 @@
 ASSETS := src/assets
 VERSION_TARGETS := version-patch version-minor version-major
 
-.PHONY: assets build check-clean $(VERSION_TARGETS)
+.DEFAULT_GOAL := help
+.PHONY: help assets build check-clean $(VERSION_TARGETS)
+
+# Show this help.
+help:
+	@grep -E '^[a-zA-Z_$$()-]+:' $(MAKEFILE_LIST) | cut -d: -f1 | sed 's/$$(VERSION_TARGETS)/$(VERSION_TARGETS)/' | tr ' ' '\n' | sed 's/^/  /'
 
 # Regenerate the three ruff data assets from the installed ruff.
 assets:
