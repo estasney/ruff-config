@@ -863,7 +863,7 @@
     ],
     "fix": "Fix is not available.",
     "fix_availability": "None",
-    "explanation": "## What it does\nChecks that function arguments are annotated with a more specific type than\n`Any`.\n\n## Why is this bad?\n`Any` is a special type indicating an unconstrained type. When an\nexpression is annotated with type `Any`, type checkers will allow all\noperations on it.\n\nIt's better to be explicit about the type of an expression, and to use\n`Any` as an \"escape hatch\" only when it is really needed.\n\n## Example\n\n```python\nfrom typing import Any\n\n\ndef foo(x: Any): ...\n```\n\nUse instead:\n\n```python\ndef foo(x: int): ...\n```\n\n## Known problems\n\nType aliases are unsupported and can lead to false positives.\nFor example, the following will trigger this rule inadvertently:\n\n```python\nfrom typing import Any\n\nMyAny = Any\n\n\ndef foo(x: MyAny): ...\n```\n\n## Options\n- `lint.flake8-annotations.allow-star-arg-any`\n\n## References\n- [Typing spec: `Any`](https://typing.python.org/en/latest/spec/special-types.html#any)\n- [Python documentation: `typing.Any`](https://docs.python.org/3/library/typing.html#typing.Any)\n- [Mypy documentation: The Any type](https://mypy.readthedocs.io/en/stable/kinds_of_types.html#the-any-type)\n",
+    "explanation": "## What it does\nChecks that function arguments and return values are annotated with a more\nspecific type than `Any`.\n\n## Why is this bad?\n`Any` is a special type indicating an unconstrained type. When an\nexpression is annotated with type `Any`, type checkers will allow all\noperations on it.\n\nIt's better to be explicit about the type of an expression, and to use\n`Any` as an \"escape hatch\" only when it is really needed.\n\n## Example\n\n```python\nfrom typing import Any\n\n\ndef foo(x: Any) -> Any: ...\n```\n\nUse instead:\n\n```python\ndef foo(x: int) -> int: ...\n```\n\n## Known problems\n\nType aliases are unsupported and can lead to false positives.\nFor example, the following will trigger this rule inadvertently:\n\n```python\nfrom typing import Any\n\nMyAny = Any\n\n\ndef foo(x: MyAny): ...\n```\n\n## Options\n- `lint.flake8-annotations.allow-star-arg-any`\n\n## References\n- [Typing spec: `Any`](https://typing.python.org/en/latest/spec/special-types.html#any)\n- [Python documentation: `typing.Any`](https://docs.python.org/3/library/typing.html#typing.Any)\n- [Mypy documentation: The Any type](https://mypy.readthedocs.io/en/stable/kinds_of_types.html#the-any-type)\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -3221,7 +3221,7 @@
     ],
     "fix": "Fix is always available.",
     "fix_availability": "Always",
-    "explanation": "## What it does\nChecks for uses of `setattr` that take a constant attribute value as an\nargument (e.g., `setattr(obj, \"foo\", 42)`).\n\n## Why is this bad?\n`setattr` is used to set attributes dynamically. If the attribute is\ndefined as a constant, it is no safer than a typical property access. When\npossible, prefer property access over `setattr` calls, as the former is\nmore concise and idiomatic.\n\n## Example\n```python\nsetattr(obj, \"foo\", 42)\n```\n\nUse instead:\n```python\nobj.foo = 42\n```\n\n## Fix safety\nThe fix is marked as unsafe for attribute names that are not in NFKC (Normalization Form KC)\nnormalization. Python normalizes identifiers using NFKC when using attribute access syntax\n(e.g., `obj.attr = value`), but does not normalize string arguments passed to `setattr`.\nRewriting `setattr(obj, \"ſ\", 1)` to `obj.ſ = 1` would be interpreted as `obj.s = 1` at\nruntime, changing behavior.\n\nAdditionally, the fix is marked as unsafe if the expression contains comments,\nas the replacement may remove comments attached to the original `setattr` call.\n\nFor example, the long s character `\"ſ\"` normalizes to `\"s\"` under NFKC, so:\n```python\n# This creates an attribute with the exact name \"ſ\"\nsetattr(obj, \"ſ\", 1)\ngetattr(obj, \"ſ\")  # Returns 1\n\n# But this would normalize to \"s\" and set a different attribute\nobj.ſ = 1  # This is interpreted as obj.s = 1, not obj.ſ = 1\n```\n\n## References\n- [Python documentation: `setattr`](https://docs.python.org/3/library/functions.html#setattr)\n",
+    "explanation": "## What it does\nChecks for uses of `setattr` that take a constant attribute value as an\nargument (e.g., `setattr(obj, \"foo\", 42)`).\n\n## Why is this bad?\n`setattr` is used to set attributes dynamically. If the attribute is\ndefined as a constant, it is no safer than a typical property access. When\npossible, prefer property access over `setattr` calls, as the former is\nmore concise and idiomatic.\n\n## Example\n```python\nsetattr(obj, \"foo\", 42)\n```\n\nUse instead:\n```python\nobj.foo = 42\n```\n\n## Fix safety\nThe fix is marked as unsafe for attribute names that are not in NFKC (Normalization Form KC)\nnormalization. Python normalizes identifiers using NFKC when using attribute access syntax\n(e.g., `obj.attr = value`), but does not normalize string arguments passed to `setattr`.\nRewriting `setattr(obj, \"ſ\", 1)` to `obj.ſ = 1` would be interpreted as `obj.s = 1` at\nruntime, changing behavior.\n\nAdditionally, the fix is marked as unsafe if the expression contains comments,\nas the replacement may remove comments attached to the original `setattr` call.\n\nFor example, the long s character `\"ſ\"` normalizes to `\"s\"` under NFKC, so:\n```python\n# This creates an attribute with the exact name \"ſ\"\nsetattr(obj, \"ſ\", 1)\ngetattr(obj, \"ſ\")  # Returns 1\n\n# But this would normalize to \"s\" and set a different attribute\nobj.ſ = 1  # This is interpreted as obj.s = 1, not obj.ſ = 1\n```\n\n## Known issues\nIn some cases, a type checker may be able to analyze an assignment more\nthoroughly than a `setattr` call. Applying the fix in such cases may result\nin new type checking diagnostics, even if the runtime behavior of the code\nis unchanged.\n\n## References\n- [Python documentation: `setattr`](https://docs.python.org/3/library/functions.html#setattr)\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -3231,7 +3231,7 @@
     "category": "complexity",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_bugbear/rules/setattr_with_constant.rs",
-      "line": 55
+      "line": 61
     }
   },
   {
@@ -4593,7 +4593,7 @@
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nChecks for unnecessary `map()` calls with lambda functions.\n\n## Why is this bad?\nUsing `map(func, iterable)` when `func` is a lambda is slower than\nusing a generator expression or a comprehension, as the latter approach\navoids the function call overhead, in addition to being more readable.\n\nThis rule also applies to `map()` calls within `list()`, `set()`, and\n`dict()` calls. For example:\n\n- Instead of `list(map(lambda num: num * 2, nums))`, use\n  `[num * 2 for num in nums]`.\n- Instead of `set(map(lambda num: num % 2 == 0, nums))`, use\n  `{num % 2 == 0 for num in nums}`.\n- Instead of `dict(map(lambda v: (v, v ** 2), values))`, use\n  `{v: v ** 2 for v in values}`.\n\n## Example\n```python\nmap(lambda x: x + 1, iterable)\n```\n\nUse instead:\n```python\n(x + 1 for x in iterable)\n```\n\n## Fix safety\nThis rule's fix is marked as unsafe, as it may occasionally drop comments\nwhen rewriting the call. In most cases, though, comments will be preserved.\n",
+    "explanation": "## What it does\nChecks for unnecessary `map()` calls with lambda functions.\n\n## Why is this bad?\nUsing `map(func, iterable)` when `func` is a lambda is slower than\nusing a generator expression or a comprehension, as the latter approach\navoids the function call overhead, in addition to being more readable.\n\nThis rule also applies to `map()` calls within `list()`, `set()`, and\n`dict()` calls. For example:\n\n- Instead of `list(map(lambda num: num * 2, nums))`, use\n  `[num * 2 for num in nums]`.\n- Instead of `set(map(lambda num: num % 2 == 0, nums))`, use\n  `{num % 2 == 0 for num in nums}`.\n- Instead of `dict(map(lambda v: (v, v ** 2), values))`, use\n  `{v: v ** 2 for v in values}`.\n\n## Example\n```python\nmap(lambda x: x + 1, iterable)\n```\n\nUse instead:\n```python\n(x + 1 for x in iterable)\n```\n\n## Known problems\nA `map` object and a generator expression are not interchangeable when the\nmapped expression raises. Once an exception propagates out of a generator,\nthe generator is closed, so every later `next()` call raises\n`StopIteration`. A `map` object is not closed, so iteration can resume after\nthe error:\n\n```python\nvalues = [\"0\", \"x\", \"2\"]\n\nm = map(lambda v: int(v), values)\nnext(m)  # 0\nnext(m)  # raises ValueError\nnext(m)  # 2\n\ng = (int(v) for v in values)\nnext(g)  # 0\nnext(g)  # raises ValueError\nnext(g)  # raises StopIteration\n```\n\nRuff cannot tell whether a caller relies on this difference, so the\ndiagnostic is still reported in such cases.\n\n## Fix safety\nThis rule's fix is marked as unsafe because it can change how errors propagate\nout of the resulting iterator, as described above. It may also drop comments\nwhen rewriting the call.\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -4603,7 +4603,7 @@
     "category": "complexity",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_map.rs",
-      "line": 48
+      "line": 73
     }
   },
   {
@@ -6300,9 +6300,9 @@
     "name": "complex-if-statement-in-stub",
     "code": "PYI002",
     "linter": "flake8-pyi",
-    "summary": "`if` test must be a simple comparison against `sys.platform` or `sys.version_info`",
+    "summary": "`if` test in a stub file must be a simple comparison against `sys.platform` or `sys.version_info`",
     "message_formats": [
-      "`if` test must be a simple comparison against `sys.platform` or `sys.version_info`"
+      "`if` test in a stub file must be a simple comparison against `sys.platform` or `sys.version_info`"
     ],
     "fix": "Fix is not available.",
     "fix_availability": "None",
@@ -8764,7 +8764,7 @@
     ],
     "fix": "Fix is always available.",
     "fix_availability": "Always",
-    "explanation": "## What it does\nChecks for boolean expressions that contain multiple equality comparisons\nto the same value.\n\n## Why is this bad?\nTo check if an object is equal to any one of multiple values, it's more\nconcise to use the `in` operator with a tuple of values.\n\n## Example\n```python\nif foo == x or foo == y:\n    ...\n```\n\nUse instead:\n```python\nif foo in (x, y):\n    ...\n```\n\n## References\n- [Python documentation: Membership test operations](https://docs.python.org/3/reference/expressions.html#membership-test-operations)\n",
+    "explanation": "## What it does\nChecks for boolean expressions that contain multiple equality comparisons\nto the same value.\n\n## Why is this bad?\nTo check if an object is equal to any one of multiple values, it's more\nconcise to use the `in` operator with a tuple of values.\n\n## Example\n```python\nif foo == x or foo == y:\n    ...\n```\n\nUse instead:\n```python\nif foo in (x, y):\n    ...\n```\n\n## Fix safety\n\nThis fix is always unsafe. It may change the value of the expression if any of the\ncomparators have side effects, and, for expressions that mix equality comparisons with\nother operands, it can change the order in which operands are evaluated. Ruff preserves\nthe original order when an operand falls before or after the group of merged comparisons,\nbut if an unmatched operand falls *between* two merged comparisons (e.g. `foo == x or bar\nor foo == y`), it's moved after the merged `in` comparison.\n\n## References\n- [Python documentation: Membership test operations](https://docs.python.org/3/reference/expressions.html#membership-test-operations)\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -8774,7 +8774,7 @@
     "category": "pedantic",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_simplify/rules/ast_bool_op.rs",
-      "line": 96
+      "line": 105
     }
   },
   {
@@ -8797,7 +8797,7 @@
     "category": "complexity",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_simplify/rules/reimplemented_builtin.rs",
-      "line": 55
+      "line": 53
     }
   },
   {
@@ -9121,7 +9121,7 @@
     "category": "correctness",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_simplify/rules/ast_bool_op.rs",
-      "line": 130
+      "line": 139
     }
   },
   {
@@ -9144,7 +9144,7 @@
     "category": "correctness",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_simplify/rules/ast_bool_op.rs",
-      "line": 163
+      "line": 172
     }
   },
   {
@@ -9167,7 +9167,7 @@
     "category": "correctness",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_simplify/rules/ast_bool_op.rs",
-      "line": 216
+      "line": 225
     }
   },
   {
@@ -9190,7 +9190,7 @@
     "category": "correctness",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_simplify/rules/ast_bool_op.rs",
-      "line": 269
+      "line": 278
     }
   },
   {
@@ -9389,7 +9389,7 @@
     ],
     "fix": "Fix is not available.",
     "fix_availability": "None",
-    "explanation": "## What it does\nChecks for banned imports.\n\n## Why is this bad?\nProjects may want to ensure that specific modules or module members are\nnot imported or accessed.\n\nSecurity or other company policies may be a reason to impose\nrestrictions on importing external Python libraries. In some cases,\nprojects may adopt conventions around the use of certain modules or\nmodule members that are not enforceable by the language itself.\n\nThis rule enforces certain import conventions project-wide automatically.\n\n## Options\n- `lint.flake8-tidy-imports.banned-api`\n",
+    "explanation": "## What it does\nChecks for banned imports.\n\n## Why is this bad?\nProjects may want to ensure that specific modules or module members are\nnot imported or accessed.\n\nSecurity or other company policies may be a reason to impose\nrestrictions on importing external Python libraries. In some cases,\nprojects may adopt conventions around the use of certain modules or\nmodule members that are not enforceable by the language itself.\n\nThis rule enforces certain import conventions project-wide automatically.\n\n## Options\n- `lint.flake8-tidy-imports.banned-api`\n- `lint.flake8-tidy-imports.extend-banned-api`\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -9399,7 +9399,7 @@
     "category": "restriction",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_tidy_imports/rules/banned_api.rs",
-      "line": 28
+      "line": 29
     }
   },
   {
@@ -9462,7 +9462,7 @@
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nEnforces the configured lazy-import policy in contexts where `lazy import`\nis legal.\n\n## Why is this bad?\nPython 3.15 adds support for `lazy import` and `lazy from ... import ...`,\nwhich defer the actual import work until the imported name is first used.\n\nDepending on the policy, some modules should be imported lazily to defer\nimport work until the name is first used, while others should remain eager\nto preserve import-time side effects.\n\nThis rule ignores contexts in which `lazy import` is invalid, such as\nfunctions, classes, `try`/`except` blocks, `__future__` imports, and\n`from ... import *` statements.\n\n## Example\n```python\nimport typing\n```\n\nUse instead:\n```python\nlazy import typing\n```\n\n## Fix availability\n\nThe fix is only available for statements that import a single name, since\nchanging `lazy` on a multi-member import could violate another name's policy.\n\n## Fix safety\n\nThis rule's fix is marked as unsafe because changing when a module is\nimported can affect runtime behavior, including import-time side effects.\n\n## Options\n- `lint.flake8-tidy-imports.require-lazy`\n- `lint.flake8-tidy-imports.ban-lazy`\n",
+    "explanation": "## What it does\nEnforces the configured lazy-import policy in contexts where `lazy import`\nis legal.\n\n## Why is this bad?\nPython 3.15 adds support for `lazy import` and `lazy from ... import ...`,\nwhich defer the actual import work until the imported name is first used.\n\nDepending on the policy, some modules should be imported lazily to defer\nimport work until the name is first used, while others should remain eager\nto preserve import-time side effects.\n\nThe rule also recognizes imports made lazy by a literal `__lazy_modules__`\ndeclaration, including when the target version is older than Python 3.15.\nThis declaration allows a module to use lazy imports on Python 3.15 and\nlater while retaining eager imports on older versions. Dynamic assignments\nto `__lazy_modules__` (e.g. `__lazy_modules__ = non_literal()`) are ignored,\nas their effects cannot be determined statically.\n\nThis rule ignores contexts in which `lazy import` is invalid, such as\nfunctions, classes, `try`/`except` blocks, `__future__` imports, and\n`from ... import *` statements.\n\n## Example\n```python\nimport typing\n```\n\nUse instead:\n```python\nlazy import typing\n```\n\n## Fix availability\n\nThe fix is only available for statements that import a single name, since\nchanging `lazy` on a multi-member import could violate another name's policy.\n\nThe fix is also unavailable for imports marked lazy by a `__lazy_modules__`\ndeclaration.\n\n## Fix safety\n\nThis rule's fix is marked as unsafe because changing when a module is\nimported can affect runtime behavior, including import-time side effects.\n\n## Options\n- `lint.flake8-tidy-imports.require-lazy`\n- `lint.flake8-tidy-imports.ban-lazy`\n",
     "preview": true,
     "status": {
       "Preview": {
@@ -9472,7 +9472,7 @@
     "category": "restriction",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_tidy_imports/rules/lazy_import_mismatch.rs",
-      "line": 50
+      "line": 60
     }
   },
   {
@@ -9485,7 +9485,7 @@
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nChecks for lazy imports that are resolved immediately at module load time.\n\n## Why is this bad?\nPython 3.15 adds support for `lazy import` and `lazy from ... import ...`,\nwhich defer the actual import work until the imported name is first used.\n\nWhen a lazily imported name is used immediately at module load time, the\nimport is resolved eagerly, defeating the purpose of marking the import as\nlazy. This is commonly caused by using a lazily imported module in a module\nglobal or in a top-level class definition.\n\n## Example\n```python\nlazy import foo\n\n\nclass Bar(foo.Foo): ...\n```\n\nUse instead:\n```python\nimport foo\n\n\nclass Bar(foo.Foo): ...\n```\n\n## Fix safety\nThis rule's fix is marked as unsafe because converting a lazy import to an\neager import changes when the imported module is executed, which can change\nruntime behavior if the module has import-time side effects.\n\nThe fix is only available when the lazy import statement imports a single\nmember, since removing `lazy` from a multi-member import would make every\nimported member eager, including names that may not be resolved immediately.\n\n## Options\n\nThe rule ignores imports required to be lazy by the following setting:\n\n- [`lint.flake8-tidy-imports.require-lazy`]\n",
+    "explanation": "## What it does\nChecks for lazy imports that are resolved immediately at module load time.\n\n## Why is this bad?\nPython 3.15 adds support for `lazy import` and `lazy from ... import ...`,\nwhich defer the actual import work until the imported name is first used.\n\nWhen a lazily imported name is used immediately at module load time, the\nimport is resolved eagerly, defeating the purpose of marking the import as\nlazy. This is commonly caused by using a lazily imported module in a module\nglobal or in a top-level class definition.\n\nThe rule also recognizes imports made lazy by a literal `__lazy_modules__`\ndeclaration, even when the target version is older than Python 3.15.\nSuch imports remain eager on older Python versions. Dynamic assignments\nto `__lazy_modules__` (e.g. `__lazy_modules__ = non_literal()`) are ignored,\nas their effects cannot be determined statically.\n\n## Example\n```python\nlazy import foo\n\n\nclass Bar(foo.Foo): ...\n```\n\nUse instead:\n```python\nimport foo\n\n\nclass Bar(foo.Foo): ...\n```\n\n## Known problems\nRuff does not detect all cases where decorators evaluate annotations. For\nexample, `@dataclasses.dataclass` can immediately resolve lazy imports used in\nfield annotations without triggering this rule.\n\n## Fix availability\nThe fix is only available when the lazy import statement imports a single\nmember, since removing `lazy` from a multi-member import would make every\nimported member eager, including names that may not be resolved immediately.\nFixes are unavailable for imports governed by a `__lazy_modules__` declaration.\n\n## Fix safety\nThis rule's fix is marked as unsafe because converting a lazy import to an\neager import changes when the imported module is executed, which can change\nruntime behavior if the module has import-time side effects.\n\n## Options\n\nThe rule ignores imports required to be lazy by the following setting:\n\n- [`lint.flake8-tidy-imports.require-lazy`]\n",
     "preview": true,
     "status": {
       "Preview": {
@@ -9495,7 +9495,7 @@
     "category": "correctness",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_tidy_imports/rules/lazy_import_immediately_resolved.rs",
-      "line": 56
+      "line": 69
     }
   },
   {
@@ -9665,11 +9665,12 @@
     "linter": "flake8-type-checking",
     "summary": "Move application import `{}` into a type-checking block",
     "message_formats": [
-      "Move application import `{}` into a type-checking block"
+      "Move application import `{}` into a type-checking block",
+      "Make application import `{}` lazy"
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nChecks for first-party imports that are only used for type annotations, but\naren't defined in a type-checking block.\n\n## Why is this bad?\nImports that are only used for type annotations add a performance overhead\nat runtime. For first-party imports, they can also contribute to import\ncycles. If an import is _only_ used in typing-only contexts, it can instead\nbe imported conditionally under an `if TYPE_CHECKING:` block to minimize\nruntime overhead.\n\nIf [`lint.flake8-type-checking.quote-annotations`] is set to `true`,\nannotations will be wrapped in quotes if doing so would enable the\ncorresponding import to be moved into an `if TYPE_CHECKING:` block.\n\nIf a class _requires_ that type annotations be available at runtime (as is\nthe case for Pydantic, SQLAlchemy, and other libraries), consider using\nthe [`lint.flake8-type-checking.runtime-evaluated-base-classes`] and\n[`lint.flake8-type-checking.runtime-evaluated-decorators`] settings to mark them\nas such.\n\nIf [`lint.future-annotations`] is set to `true`, `from __future__ import\nannotations` will be added if doing so would enable an import to be\nmoved into an `if TYPE_CHECKING:` block. This takes precedence over the\n[`lint.flake8-type-checking.quote-annotations`] setting described above if\nboth settings are enabled.\n\n\n## Example\n```python\nfrom __future__ import annotations\n\nfrom . import local_module\n\n\ndef func(sized: local_module.Container) -> int:\n    return len(sized)\n```\n\nUse instead:\n```python\nfrom __future__ import annotations\n\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    from . import local_module\n\n\ndef func(sized: local_module.Container) -> int:\n    return len(sized)\n```\n\n## Options\n- `lint.flake8-type-checking.quote-annotations`\n- `lint.flake8-type-checking.runtime-evaluated-base-classes`\n- `lint.flake8-type-checking.runtime-evaluated-decorators`\n- `lint.flake8-type-checking.strict`\n- `lint.typing-modules`\n- `lint.future-annotations`\n\n## References\n- [PEP 563: Runtime annotation resolution and `TYPE_CHECKING`](https://peps.python.org/pep-0563/#runtime-annotation-resolution-and-type-checking)\n",
+    "explanation": "## What it does\nChecks for first-party imports that are only used for type annotations, but\naren't imported lazily or defined in a type-checking block.\n\n## Why is this bad?\nImports that are only used for type annotations add a performance overhead\nat runtime. For first-party imports, they can also contribute to import\ncycles. If an import is _only_ used in typing-only contexts, it can instead\nbe imported conditionally under an `if TYPE_CHECKING:` block to minimize\nruntime overhead.\n\nIf [`lint.flake8-type-checking.quote-annotations`] is set to `true`,\nannotations will be wrapped in quotes if doing so would enable the\ncorresponding import to be moved into an `if TYPE_CHECKING:` block.\n\nIf a class _requires_ that type annotations be available at runtime (as is\nthe case for Pydantic, SQLAlchemy, and other libraries), consider using\nthe [`lint.flake8-type-checking.runtime-evaluated-base-classes`] and\n[`lint.flake8-type-checking.runtime-evaluated-decorators`] settings to mark them\nas such.\n\nIf [`lint.future-annotations`] is set to `true`, `from __future__ import\nannotations` will be added if doing so would enable an import to be\nmoved into an `if TYPE_CHECKING:` block. This takes precedence over the\n[`lint.flake8-type-checking.quote-annotations`] setting described above if\nboth settings are enabled.\n\nOn Python 3.15 and later, lazy imports are also exempt, including imports\nmade lazy by a literal `__lazy_modules__` declaration. The fix prefers adding\n`lazy` to single-name import statements where the syntax is legal and\n[`lint.flake8-tidy-imports.ban-lazy`] allows it. This defers the import while\nkeeping the name available for runtime annotation inspection.\n\n## Example\n```python\nfrom __future__ import annotations\n\nfrom . import local_module\n\n\ndef func(sized: local_module.Container) -> int:\n    return len(sized)\n```\n\nUse instead:\n```python\nfrom __future__ import annotations\n\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    from . import local_module\n\n\ndef func(sized: local_module.Container) -> int:\n    return len(sized)\n```\n\nOn Python 3.15 and later, using a lazy import is also an option:\n```python\nlazy from . import local_module\n\n\ndef func(sized: local_module.Container) -> int:\n    return len(sized)\n```\n\n## Fix safety\nThis rule's fixes are unsafe because changing when a module is imported can\naffect runtime behavior, including import-time side effects.\n\n## Options\n- `lint.flake8-tidy-imports.ban-lazy`\n- `lint.flake8-type-checking.quote-annotations`\n- `lint.flake8-type-checking.runtime-evaluated-base-classes`\n- `lint.flake8-type-checking.runtime-evaluated-decorators`\n- `lint.flake8-type-checking.strict`\n- `lint.typing-modules`\n- `lint.future-annotations`\n\n## References\n- [PEP 563: Runtime annotation resolution and `TYPE_CHECKING`](https://peps.python.org/pep-0563/#runtime-annotation-resolution-and-type-checking)\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -9679,7 +9680,7 @@
     "category": "pedantic",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_type_checking/rules/typing_only_runtime_import.rs",
-      "line": 84
+      "line": 105
     }
   },
   {
@@ -9688,11 +9689,12 @@
     "linter": "flake8-type-checking",
     "summary": "Move third-party import `{}` into a type-checking block",
     "message_formats": [
-      "Move third-party import `{}` into a type-checking block"
+      "Move third-party import `{}` into a type-checking block",
+      "Make third-party import `{}` lazy"
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nChecks for third-party imports that are only used for type annotations, but\naren't defined in a type-checking block.\n\n## Why is this bad?\nImports that are only used for type annotations add a performance overhead\nat runtime. If an import is _only_ used in typing-only contexts, it can\ninstead be imported conditionally under an `if TYPE_CHECKING:` block to\nminimize runtime overhead.\n\nIf [`lint.flake8-type-checking.quote-annotations`] is set to `true`,\nannotations will be wrapped in quotes if doing so would enable the\ncorresponding import to be moved into an `if TYPE_CHECKING:` block.\n\nIf a class _requires_ that type annotations be available at runtime (as is\nthe case for Pydantic, SQLAlchemy, and other libraries), consider using\nthe [`lint.flake8-type-checking.runtime-evaluated-base-classes`] and\n[`lint.flake8-type-checking.runtime-evaluated-decorators`] settings to mark them\nas such.\n\nIf [`lint.future-annotations`] is set to `true`, `from __future__ import\nannotations` will be added if doing so would enable an import to be\nmoved into an `if TYPE_CHECKING:` block. This takes precedence over the\n[`lint.flake8-type-checking.quote-annotations`] setting described above if\nboth settings are enabled.\n\n## Example\n```python\nfrom __future__ import annotations\n\nimport pandas as pd\n\n\ndef func(df: pd.DataFrame) -> int:\n    return len(df)\n```\n\nUse instead:\n```python\nfrom __future__ import annotations\n\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    import pandas as pd\n\n\ndef func(df: pd.DataFrame) -> int:\n    return len(df)\n```\n\n## Options\n- `lint.flake8-type-checking.quote-annotations`\n- `lint.flake8-type-checking.runtime-evaluated-base-classes`\n- `lint.flake8-type-checking.runtime-evaluated-decorators`\n- `lint.flake8-type-checking.strict`\n- `lint.typing-modules`\n- `lint.future-annotations`\n\n## References\n- [PEP 563: Runtime annotation resolution and `TYPE_CHECKING`](https://peps.python.org/pep-0563/#runtime-annotation-resolution-and-type-checking)\n",
+    "explanation": "## What it does\nChecks for third-party imports that are only used for type annotations, but\naren't imported lazily or defined in a type-checking block.\n\n## Why is this bad?\nImports that are only used for type annotations add a performance overhead\nat runtime. If an import is _only_ used in typing-only contexts, it can\ninstead be imported conditionally under an `if TYPE_CHECKING:` block to\nminimize runtime overhead.\n\nIf [`lint.flake8-type-checking.quote-annotations`] is set to `true`,\nannotations will be wrapped in quotes if doing so would enable the\ncorresponding import to be moved into an `if TYPE_CHECKING:` block.\n\nIf a class _requires_ that type annotations be available at runtime (as is\nthe case for Pydantic, SQLAlchemy, and other libraries), consider using\nthe [`lint.flake8-type-checking.runtime-evaluated-base-classes`] and\n[`lint.flake8-type-checking.runtime-evaluated-decorators`] settings to mark them\nas such.\n\nIf [`lint.future-annotations`] is set to `true`, `from __future__ import\nannotations` will be added if doing so would enable an import to be\nmoved into an `if TYPE_CHECKING:` block. This takes precedence over the\n[`lint.flake8-type-checking.quote-annotations`] setting described above if\nboth settings are enabled.\n\nOn Python 3.15 and later, lazy imports are also exempt, including imports\nmade lazy by a literal `__lazy_modules__` declaration. The fix prefers adding\n`lazy` to single-name import statements where the syntax is legal and\n[`lint.flake8-tidy-imports.ban-lazy`] allows it. This defers the import while\nkeeping the name available for runtime annotation inspection.\n\n## Example\n```python\nfrom __future__ import annotations\n\nimport pandas as pd\n\n\ndef func(df: pd.DataFrame) -> int:\n    return len(df)\n```\n\nUse instead:\n```python\nfrom __future__ import annotations\n\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    import pandas as pd\n\n\ndef func(df: pd.DataFrame) -> int:\n    return len(df)\n```\n\nOn Python 3.15 and later, using a lazy import is also an option:\n```python\nlazy import pandas as pd\n\n\ndef func(df: pd.DataFrame) -> int:\n    return len(df)\n```\n\n## Fix safety\nThis rule's fixes are unsafe because changing when a module is imported can\naffect runtime behavior, including import-time side effects.\n\n## Options\n- `lint.flake8-tidy-imports.ban-lazy`\n- `lint.flake8-type-checking.quote-annotations`\n- `lint.flake8-type-checking.runtime-evaluated-base-classes`\n- `lint.flake8-type-checking.runtime-evaluated-decorators`\n- `lint.flake8-type-checking.strict`\n- `lint.typing-modules`\n- `lint.future-annotations`\n\n## References\n- [PEP 563: Runtime annotation resolution and `TYPE_CHECKING`](https://peps.python.org/pep-0563/#runtime-annotation-resolution-and-type-checking)\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -9702,7 +9704,7 @@
     "category": "pedantic",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_type_checking/rules/typing_only_runtime_import.rs",
-      "line": 167
+      "line": 214
     }
   },
   {
@@ -9711,11 +9713,12 @@
     "linter": "flake8-type-checking",
     "summary": "Move standard library import `{}` into a type-checking block",
     "message_formats": [
-      "Move standard library import `{}` into a type-checking block"
+      "Move standard library import `{}` into a type-checking block",
+      "Make standard library import `{}` lazy"
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nChecks for standard library imports that are only used for type\nannotations, but aren't defined in a type-checking block.\n\n## Why is this bad?\nImports that are only used for type annotations add a performance overhead\nat runtime. If an import is _only_ used in typing-only contexts, it can\ninstead be imported conditionally under an `if TYPE_CHECKING:` block to\nminimize runtime overhead.\n\nIf [`lint.flake8-type-checking.quote-annotations`] is set to `true`,\nannotations will be wrapped in quotes if doing so would enable the\ncorresponding import to be moved into an `if TYPE_CHECKING:` block.\n\nIf a class _requires_ that type annotations be available at runtime (as is\nthe case for Pydantic, SQLAlchemy, and other libraries), consider using\nthe [`lint.flake8-type-checking.runtime-evaluated-base-classes`] and\n[`lint.flake8-type-checking.runtime-evaluated-decorators`] settings to mark them\nas such.\n\nIf [`lint.future-annotations`] is set to `true`, `from __future__ import\nannotations` will be added if doing so would enable an import to be\nmoved into an `if TYPE_CHECKING:` block. This takes precedence over the\n[`lint.flake8-type-checking.quote-annotations`] setting described above if\nboth settings are enabled.\n\n## Example\n```python\nfrom __future__ import annotations\n\nfrom pathlib import Path\n\n\ndef func(path: Path) -> str:\n    return str(path)\n```\n\nUse instead:\n```python\nfrom __future__ import annotations\n\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    from pathlib import Path\n\n\ndef func(path: Path) -> str:\n    return str(path)\n```\n\n## Options\n- `lint.flake8-type-checking.quote-annotations`\n- `lint.flake8-type-checking.runtime-evaluated-base-classes`\n- `lint.flake8-type-checking.runtime-evaluated-decorators`\n- `lint.flake8-type-checking.strict`\n- `lint.typing-modules`\n- `lint.future-annotations`\n\n## References\n- [PEP 563: Runtime annotation resolution and `TYPE_CHECKING`](https://peps.python.org/pep-0563/#runtime-annotation-resolution-and-type-checking)\n",
+    "explanation": "## What it does\nChecks for standard library imports that are only used for type\nannotations, but aren't imported lazily or defined in a type-checking block.\n\n## Why is this bad?\nImports that are only used for type annotations add a performance overhead\nat runtime. If an import is _only_ used in typing-only contexts, it can\ninstead be imported conditionally under an `if TYPE_CHECKING:` block to\nminimize runtime overhead.\n\nIf [`lint.flake8-type-checking.quote-annotations`] is set to `true`,\nannotations will be wrapped in quotes if doing so would enable the\ncorresponding import to be moved into an `if TYPE_CHECKING:` block.\n\nIf a class _requires_ that type annotations be available at runtime (as is\nthe case for Pydantic, SQLAlchemy, and other libraries), consider using\nthe [`lint.flake8-type-checking.runtime-evaluated-base-classes`] and\n[`lint.flake8-type-checking.runtime-evaluated-decorators`] settings to mark them\nas such.\n\nIf [`lint.future-annotations`] is set to `true`, `from __future__ import\nannotations` will be added if doing so would enable an import to be\nmoved into an `if TYPE_CHECKING:` block. This takes precedence over the\n[`lint.flake8-type-checking.quote-annotations`] setting described above if\nboth settings are enabled.\n\nOn Python 3.15 and later, lazy imports are also exempt, including imports\nmade lazy by a literal `__lazy_modules__` declaration. The fix prefers adding\n`lazy` to single-name import statements where the syntax is legal and\n[`lint.flake8-tidy-imports.ban-lazy`] allows it. This defers the import while\nkeeping the name available for runtime annotation inspection.\n\n## Example\n```python\nfrom __future__ import annotations\n\nfrom pathlib import Path\n\n\ndef func(path: Path) -> str:\n    return str(path)\n```\n\nUse instead:\n```python\nfrom __future__ import annotations\n\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    from pathlib import Path\n\n\ndef func(path: Path) -> str:\n    return str(path)\n```\n\nOn Python 3.15 and later, using a lazy import is also an option:\n```python\nlazy from pathlib import Path\n\n\ndef func(path: Path) -> str:\n    return str(path)\n```\n\n## Fix safety\nThis rule's fixes are unsafe because changing when a module is imported can\naffect runtime behavior, including import-time side effects.\n\n## Options\n- `lint.flake8-tidy-imports.ban-lazy`\n- `lint.flake8-type-checking.quote-annotations`\n- `lint.flake8-type-checking.runtime-evaluated-base-classes`\n- `lint.flake8-type-checking.runtime-evaluated-decorators`\n- `lint.flake8-type-checking.strict`\n- `lint.typing-modules`\n- `lint.future-annotations`\n\n## References\n- [PEP 563: Runtime annotation resolution and `TYPE_CHECKING`](https://peps.python.org/pep-0563/#runtime-annotation-resolution-and-type-checking)\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -9725,7 +9728,7 @@
     "category": "pedantic",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/flake8_type_checking/rules/typing_only_runtime_import.rs",
-      "line": 250
+      "line": 323
     }
   },
   {
@@ -13004,7 +13007,7 @@
     "category": "pedantic",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/pycodestyle/rules/type_comparison.rs",
-      "line": 52
+      "line": 51
     }
   },
   {
@@ -15967,7 +15970,7 @@
     "category": "pedantic",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/pylint/rules/compare_to_empty_string.rs",
-      "line": 44
+      "line": 43
     }
   },
   {
@@ -16984,7 +16987,7 @@
     "category": "suspicious",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/pylint/rules/comparison_with_itself.rs",
-      "line": 34
+      "line": 32
     }
   },
   {
@@ -17007,7 +17010,7 @@
     "category": "complexity",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/pylint/rules/comparison_of_constant.rs",
-      "line": 31
+      "line": 30
     }
   },
   {
@@ -18872,8 +18875,8 @@
     "message_formats": [
       "`cElementTree` is deprecated, use `ElementTree`"
     ],
-    "fix": "Fix is always available.",
-    "fix_availability": "Always",
+    "fix": "Fix is sometimes available.",
+    "fix_availability": "Sometimes",
     "explanation": "## What it does\nChecks for uses of the `xml.etree.cElementTree` module.\n\n## Why is this bad?\nIn Python 3.3, `xml.etree.cElementTree` was deprecated in favor of\n`xml.etree.ElementTree`.\n\n## Example\n```python\nfrom xml.etree import cElementTree as ET\n```\n\nUse instead:\n```python\nfrom xml.etree import ElementTree as ET\n```\n\n## References\n- [Python documentation: `xml.etree.ElementTree`](https://docs.python.org/3/library/xml.etree.elementtree.html)\n",
     "preview": false,
     "status": {
@@ -18941,8 +18944,8 @@
     "message_formats": [
       "`mock` is deprecated, use `unittest.mock`"
     ],
-    "fix": "Fix is always available.",
-    "fix_availability": "Always",
+    "fix": "Fix is sometimes available.",
+    "fix_availability": "Sometimes",
     "explanation": "## What it does\nChecks for imports of the `mock` module that should be replaced with\n`unittest.mock`.\n\n## Why is this bad?\nSince Python 3.3, `mock` has been a part of the standard library as\n`unittest.mock`. The `mock` package is deprecated; use `unittest.mock`\ninstead.\n\n## Example\n```python\nimport mock\n```\n\nUse instead:\n```python\nfrom unittest import mock\n```\n\n## Options\n\nThis rule will not trigger if the `mock` import is required by the `isort` configuration.\n\n- `lint.isort.required-imports`\n\n## References\n- [Python documentation: `unittest.mock`](https://docs.python.org/3/library/unittest.mock.html)\n- [PyPI: `mock`](https://pypi.org/project/mock/)\n",
     "preview": false,
     "status": {
@@ -19268,7 +19271,7 @@
     ],
     "fix": "Fix is always available.",
     "fix_availability": "Always",
-    "explanation": "## What it does\nChecks for use of `TypeAlias` annotations and `TypeAliasType` assignments\nfor declaring type aliases.\n\n## Why is this bad?\nThe `type` keyword was introduced in Python 3.12 by [PEP 695] for defining\ntype aliases. The `type` keyword is easier to read and provides cleaner\nsupport for generics.\n\n## Known problems\n[PEP 695] uses inferred variance for type parameters, instead of the\n`covariant` and `contravariant` keywords used by `TypeVar` variables. As\nsuch, rewriting a type alias using a PEP-695 `type` statement may change\nthe variance of the alias's type parameters.\n\nUnlike type aliases that use simple assignments, definitions created using\n[PEP 695] `type` statements cannot be used as drop-in replacements at\nruntime for the value on the right-hand side of the statement. This means\nthat while for some simple old-style type aliases you can use them as the\nsecond argument to an `isinstance()` call (for example), doing the same\nwith a [PEP 695] `type` statement will always raise `TypeError` at\nruntime.\n\n## Example\n```python\nfrom typing import Annotated, TypeAlias, TypeAliasType\nfrom annotated_types import Gt\n\nListOfInt: TypeAlias = list[int]\nPositiveInt = TypeAliasType(\"PositiveInt\", Annotated[int, Gt(0)])\n```\n\nUse instead:\n```python\nfrom typing import Annotated\nfrom annotated_types import Gt\n\ntype ListOfInt = list[int]\ntype PositiveInt = Annotated[int, Gt(0)]\n```\n\n## Fix safety\n\nThis fix is marked unsafe for `TypeAlias` assignments outside of stub files because of the\nruntime behavior around `isinstance()` calls noted above. The fix is also unsafe for\n`TypeAliasType` assignments if there are any comments in the replacement range that would be\ndeleted.\n\n## See also\n\nThis rule only applies to `TypeAlias`es and `TypeAliasType`s. See\n[`non-pep695-generic-class`][UP046] and [`non-pep695-generic-function`][UP047] for similar\ntransformations for generic classes and functions.\n\nThis rule replaces standalone type variables in aliases but doesn't remove the corresponding\ntype variables even if they are unused after the fix. See [`unused-private-type-var`][PYI018]\nfor a rule to clean up unused private type variables.\n\nThis rule will not rename private type variables to remove leading underscores, even though the\nnew type parameters are restricted in scope to their associated aliases. See\n[`private-type-parameter`][UP049] for a rule to update these names.\n\n## Options\n\n- `target-version`\n\n[PEP 695]: https://peps.python.org/pep-0695/\n[PYI018]: https://docs.astral.sh/ruff/rules/unused-private-type-var/\n[UP046]: https://docs.astral.sh/ruff/rules/non-pep695-generic-class/\n[UP047]: https://docs.astral.sh/ruff/rules/non-pep695-generic-function/\n[UP049]: https://docs.astral.sh/ruff/rules/private-type-parameter/\n",
+    "explanation": "## What it does\nChecks for use of `TypeAlias` annotations and `TypeAliasType` assignments\nfor declaring type aliases.\n\n## Why is this bad?\nThe `type` keyword was introduced in Python 3.12 by [PEP 695] for defining\ntype aliases. The `type` keyword is easier to read and provides cleaner\nsupport for generics.\n\n## Known problems\n[PEP 695] uses inferred variance for type parameters, instead of the\n`covariant` and `contravariant` keywords used by `TypeVar` variables. As\nsuch, rewriting a type alias using a PEP-695 `type` statement may change\nthe variance of the alias's type parameters.\n\nUnlike type aliases that use simple assignments, definitions created using\n[PEP 695] `type` statements cannot be used as drop-in replacements at\nruntime for the value on the right-hand side of the statement. This means\nthat while for some simple old-style type aliases you can use them as the\nsecond argument to an `isinstance()` call (for example), doing the same\nwith a [PEP 695] `type` statement will always raise `TypeError` at\nruntime.\n\n## Example\n```python\nfrom typing import Annotated, TypeAlias, TypeAliasType\nfrom annotated_types import Gt\n\nListOfInt: TypeAlias = list[int]\nPositiveInt = TypeAliasType(\"PositiveInt\", Annotated[int, Gt(0)])\n```\n\nUse instead:\n```python\nfrom typing import Annotated\nfrom annotated_types import Gt\n\ntype ListOfInt = list[int]\ntype PositiveInt = Annotated[int, Gt(0)]\n```\n\n## Fix safety\n\nThis fix is always marked unsafe because it can change runtime behavior and type-checking\nsemantics, as described above. It may also remove comments.\n\nThe rule also cannot inspect type variables defined in another module. For `TypeAlias`\nannotations, this means the fix may fail to convert legacy type variables to type parameters,\nproducing code that will be rejected by type checkers. For `TypeAliasType`, legacy type\nvariables are recognized via the explicit `type_params` argument, but the type variable's\ndefinition cannot be resolved to preserve its bounds, constraints, defaults, or even kind,\nproducing unconstrained `TypeVar`s.\n\n## See also\n\nThis rule only applies to `TypeAlias`es and `TypeAliasType`s. See\n[`non-pep695-generic-class`][UP046] and [`non-pep695-generic-function`][UP047] for similar\ntransformations for generic classes and functions.\n\nThis rule replaces standalone type variables in aliases but doesn't remove the corresponding\ntype variables even if they are unused after the fix. See [`unused-private-type-var`][PYI018]\nfor a rule to clean up unused private type variables.\n\nThis rule will not rename private type variables to remove leading underscores, even though the\nnew type parameters are restricted in scope to their associated aliases. See\n[`private-type-parameter`][UP049] for a rule to update these names.\n\n## Options\n\n- `target-version`\n\n[PEP 695]: https://peps.python.org/pep-0695/\n[PYI018]: https://docs.astral.sh/ruff/rules/unused-private-type-var/\n[UP046]: https://docs.astral.sh/ruff/rules/non-pep695-generic-class/\n[UP047]: https://docs.astral.sh/ruff/rules/non-pep695-generic-function/\n[UP049]: https://docs.astral.sh/ruff/rules/private-type-parameter/\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -19278,7 +19281,7 @@
     "category": "complexity",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/pyupgrade/rules/pep695/non_pep695_type_alias.rs",
-      "line": 92
+      "line": 98
     }
   },
   {
@@ -19532,6 +19535,29 @@
     "source_location": {
       "file": "crates/ruff_linter/src/rules/pyupgrade/rules/deprecated_abc_decorator.rs",
       "line": 55
+    }
+  },
+  {
+    "name": "context-manager-iterator",
+    "code": "UP052",
+    "linter": "pyupgrade",
+    "summary": "Use `{generator}` instead of `{iterator}` for a context manager",
+    "message_formats": [
+      "Use `{generator}` instead of `{iterator}` for a context manager"
+    ],
+    "fix": "Fix is sometimes available.",
+    "fix_availability": "Sometimes",
+    "explanation": "## What it does\nChecks for generator-based context managers annotated with `Iterator` or\n`AsyncIterator` instead of `Generator` or `AsyncGenerator`.\n\n## Why is this bad?\n`contextlib.contextmanager` and `contextlib.asynccontextmanager` require\ngenerators, which support methods such as `throw` that are not guaranteed\nby the iterator protocols. The iterator overloads of these decorators are\ndeprecated in [typeshed](https://github.com/python/typeshed/blob/main/stdlib/contextlib.pyi).\n\n## Example\n\n```python\nfrom collections.abc import Iterator\nfrom contextlib import contextmanager\n\n\n@contextmanager\ndef example() -> Iterator[int]:\n    yield 1\n```\n\nUse instead:\n\n```python\nfrom collections.abc import Generator\nfrom contextlib import contextmanager\n\n\n@contextmanager\ndef example() -> Generator[int, None, None]:\n    yield 1\n```\n\nOn Python 3.13 and later, the fix omits the default type arguments and uses\n`Generator[int]` or `AsyncGenerator[int]`.\n\n## Fix safety\nThe fix is unsafe because it changes the function's runtime annotations\nand may add an import, introducing a new name in the module. For a generator\nthat returns a value, the fix uses `object` as the return type to accommodate\nany return value.\n\n## Known limitations\nThe rule checks functions whose innermost decorator is a contextlib\ncontext manager and whose bodies contain a `yield` or `yield from`.\n\n## Options\n- `target-version`\n\n## References\n- [Python documentation: `contextlib.contextmanager`](https://docs.python.org/3/library/contextlib.html#contextlib.contextmanager)\n- [Python documentation: `contextlib.asynccontextmanager`](https://docs.python.org/3/library/contextlib.html#contextlib.asynccontextmanager)\n",
+    "preview": true,
+    "status": {
+      "Preview": {
+        "since": "0.16.10"
+      }
+    },
+    "category": "suspicious",
+    "source_location": {
+      "file": "crates/ruff_linter/src/rules/pyupgrade/rules/context_manager_iterator.rs",
+      "line": 65
     }
   },
   {
@@ -20823,7 +20849,7 @@
     ],
     "fix": "Fix is sometimes available.",
     "fix_availability": "Sometimes",
-    "explanation": "## What it does\nChecks for `__all__` definitions that are not ordered\naccording to an \"isort-style\" sort.\n\nAn isort-style sort orders items first according to their casing:\nSCREAMING_SNAKE_CASE names (conventionally used for global constants)\ncome first, followed by CamelCase names (conventionally used for\nclasses), followed by anything else. Within each category,\na [natural sort](https://en.wikipedia.org/wiki/Natural_sort_order)\nis used to order the elements.\n\n## Why is this bad?\nConsistency is good. Use a common convention for `__all__` to make your\ncode more readable and idiomatic.\n\n## Example\n```python\nimport sys\n\n__all__ = [\n    \"b\",\n    \"c\",\n    \"a\",\n]\n\nif sys.platform == \"win32\":\n    __all__ += [\"z\", \"y\"]\n```\n\nUse instead:\n```python\nimport sys\n\n__all__ = [\n    \"a\",\n    \"b\",\n    \"c\",\n]\n\nif sys.platform == \"win32\":\n    __all__ += [\"y\", \"z\"]\n```\n\n## Fix safety\nThis rule's fix is marked as unsafe if there are any comments that take up\na whole line by themselves inside the `__all__` definition, for example:\n```py\n__all__ = [\n    # eggy things\n    \"duck_eggs\",\n    \"chicken_eggs\",\n    # hammy things\n    \"country_ham\",\n    \"parma_ham\",\n]\n```\n\nThis is a common pattern used to delimit categories within a module's API,\nbut it would be out of the scope of this rule to attempt to maintain these\ncategories when alphabetically sorting the items of `__all__`.\n\nThe fix is also marked as unsafe if there are more than two `__all__` items\non a single line and that line also has a trailing comment, since here it\nis impossible to accurately gauge which item the comment should be moved\nwith when sorting `__all__`:\n```py\n__all__ = [\n    \"a\", \"c\", \"e\",  # a comment\n    \"b\", \"d\", \"f\",  # a second  comment\n]\n```\n\nOther than this, the rule's fix is marked as always being safe, in that\nit should very rarely alter the semantics of any Python code.\nHowever, note that (although it's rare) the value of `__all__`\ncould be read by code elsewhere that depends on the exact\niteration order of the items in `__all__`, in which case this\nrule's fix could theoretically cause breakage.\n",
+    "explanation": "## What it does\nChecks for `__all__` definitions that are not ordered\naccording to an \"isort-style\" sort.\n\nAn isort-style sort orders items first according to their casing:\nSCREAMING_SNAKE_CASE names (conventionally used for global constants)\ncome first, followed by CamelCase names (conventionally used for\nclasses), followed by anything else. Within each category,\na [natural sort](https://en.wikipedia.org/wiki/Natural_sort_order)\nis used to order the elements.\n\nNote that \"isort-style\" sorting here refers to how `isort` categorizes\nand orders imported symbols by casing (similar to `isort`'s\n[`order-by-type`](https://isort.readthedocs.io/en/latest/configuration/options.html#order-by-type)\nsetting), rather than `isort`'s\n[`sort-reexports`](https://isort.readthedocs.io/en/latest/configuration/options.html#sort-re-exports)\noption, which sorts `__all__` strictly lexicographically.\n\n## Why is this bad?\nConsistency is good. Use a common convention for `__all__` to make your\ncode more readable and idiomatic.\n\n## Example\n```python\nimport sys\n\n__all__ = [\n    \"b\",\n    \"c\",\n    \"a\",\n]\n\nif sys.platform == \"win32\":\n    __all__ += [\"z\", \"y\"]\n```\n\nUse instead:\n```python\nimport sys\n\n__all__ = [\n    \"a\",\n    \"b\",\n    \"c\",\n]\n\nif sys.platform == \"win32\":\n    __all__ += [\"y\", \"z\"]\n```\n\n## Fix safety\nThis rule's fix is marked as unsafe if there are any comments that take up\na whole line by themselves inside the `__all__` definition, for example:\n```py\n__all__ = [\n    # eggy things\n    \"duck_eggs\",\n    \"chicken_eggs\",\n    # hammy things\n    \"country_ham\",\n    \"parma_ham\",\n]\n```\n\nThis is a common pattern used to delimit categories within a module's API,\nbut it would be out of the scope of this rule to attempt to maintain these\ncategories when alphabetically sorting the items of `__all__`.\n\nThe fix is also marked as unsafe if there are more than two `__all__` items\non a single line and that line also has a trailing comment, since here it\nis impossible to accurately gauge which item the comment should be moved\nwith when sorting `__all__`:\n```py\n__all__ = [\n    \"a\", \"c\", \"e\",  # a comment\n    \"b\", \"d\", \"f\",  # a second  comment\n]\n```\n\nOther than this, the rule's fix is marked as always being safe, in that\nit should very rarely alter the semantics of any Python code.\nHowever, note that (although it's rare) the value of `__all__`\ncould be read by code elsewhere that depends on the exact\niteration order of the items in `__all__`, in which case this\nrule's fix could theoretically cause breakage.\n",
     "preview": false,
     "status": {
       "Stable": {
@@ -20833,7 +20859,7 @@
     "category": "style",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/ruff/rules/sort_dunder_all.rs",
-      "line": 92
+      "line": 99
     }
   },
   {
@@ -21831,7 +21857,7 @@
     "category": "suspicious",
     "source_location": {
       "file": "crates/ruff_linter/src/rules/ruff/rules/float_equality_comparison.rs",
-      "line": 104
+      "line": 103
     }
   },
   {
