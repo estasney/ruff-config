@@ -18,23 +18,30 @@ const RULES_PATH = resolve(ASSETS, 'ruffRules.json');
 const LINTERS_PATH = resolve(ASSETS, 'ruffLinters.json');
 const VERSION_PATH = resolve(ASSETS, 'ruffVersion.json');
 
-type TCodedRuffRule = TRuffRule & { code: string; linter: string };
-
-const isCoded = (rule: TRuffRule): rule is TCodedRuffRule =>
-  rule.code !== null && rule.linter !== null;
-
-const toRule = (raw: TCodedRuffRule): TRule => {
-  const [kind, since] = Object.entries(raw.status)[0] as [TRule['status']['kind'], { since: string }];
-  return {
-    code: raw.code,
-    name: raw.name,
-    description: raw.summary,
-    explanation: raw.explanation,
-    fixAvailability: raw.fix_availability,
-    preview: raw.preview,
-    status: { kind, since: since.since },
-  };
+type TSelectableRuffRule = TRuffRule & {
+  code: string;
+  linter: string;
+  status: Exclude<TRuffRule['status'], { Removed: unknown }>;
 };
+
+// ruff rejects a removed rule selected by exact code.
+const isSelectable = (rule: TRuffRule): rule is TSelectableRuffRule =>
+  rule.code !== null && rule.linter !== null && !('Removed' in rule.status);
+
+const toStatus = (status: TSelectableRuffRule['status']): TRule['status'] =>
+  'Stable' in status
+    ? { kind: 'Stable', since: status.Stable.since }
+    : { kind: 'Preview', since: status.Preview.since };
+
+const toRule = (raw: TSelectableRuffRule): TRule => ({
+  code: raw.code,
+  name: raw.name,
+  description: raw.summary,
+  explanation: raw.explanation,
+  fixAvailability: raw.fix_availability,
+  preview: raw.preview,
+  status: toStatus(raw.status),
+});
 
 interface TGroupIdentity {
   key: string;
@@ -48,7 +55,7 @@ interface TGroupIdentity {
 // ("") yields E, W and Pylint ("PL") yields PLC, PLE, PLR, PLW. Rule codes carry
 // that full prefix (PLC0105), so categories are matched on linter.prefix +
 // category.prefix. Linters without categories use their prefix directly.
-const groupFor = (rule: TCodedRuffRule, linters: Map<string, TRuffLinter>): TGroupIdentity => {
+const groupFor = (rule: TSelectableRuffRule, linters: Map<string, TRuffLinter>): TGroupIdentity => {
   const linter = linters.get(rule.linter);
   invariant(linter, `no linter metadata for ${rule.linter}`);
 
@@ -70,7 +77,7 @@ const buildRuleset = (
   const linters = new Map(rawLinters.map((l) => [l.name, l] as const));
   const groups = new Map<string, TRuleGroup>();
 
-  for (const rule of rawRules.filter(isCoded)) {
+  for (const rule of rawRules.filter(isSelectable)) {
     const { key, name } = groupFor(rule, linters);
     const existing = groups.get(key);
     if (existing) {

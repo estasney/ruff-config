@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const fixAvailabilitySchema = z.enum(['Always', 'None', 'Sometimes']);
 
 export const ruleStatusSchema = z.object({
-  kind: z.enum(['Stable', 'Preview', 'Removed']),
+  kind: z.enum(['Stable', 'Preview']),
   since: z.string(),
 });
 
