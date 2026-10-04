@@ -1,6 +1,7 @@
 import {useCallback, useState} from 'react';
 
 import ruleset from 'virtual:ruff-rules';
+import {AdvancedConfig} from "~/components/AdvancedConfig";
 import {ConfigModal} from "~/components/ConfigModal";
 import {RuleGroup} from "~/components/RuleGroup";
 import {deriveGroupState} from "~/domain/ruleState";
@@ -12,7 +13,18 @@ type TExpandedGroups = Set<string>;
 const {ruffVersion} = ruleset;
 
 export const RuffConfigurator = () => {
-    const {groups, ruleStates, stats, getConfig, setRuleState, setGroupState, droppedCodes} = useRuleStates();
+    const {
+        groups,
+        ruleStates,
+        advancedOptions,
+        advancedOptionStates,
+        stats,
+        getConfig,
+        setRuleState,
+        setGroupState,
+        setAdvancedOptionState,
+        droppedCodes,
+    } = useRuleStates();
     const {searchTerm, filteredGroups, onSearchChange} = useGroupSearch(groups);
     const [expandedGroups, setExpandedGroups] = useState<TExpandedGroups>(() => new Set());
     const [showConfig, setShowConfig] = useState(false);
@@ -82,6 +94,12 @@ export const RuffConfigurator = () => {
                         <span className="text-green-400">Selected: <strong>{stats.selected}</strong></span>
                     </div>
                 </div>
+
+                <AdvancedConfig
+                    advancedOptions={advancedOptions}
+                    advancedOptionStates={advancedOptionStates}
+                    onOptionChange={setAdvancedOptionState}
+                />
 
                 {droppedCodes.length > 0 && !dropNoticeDismissed ? (
                     <div className="bg-amber-950 border border-amber-700 rounded-lg p-4 mb-4 flex items-start justify-between gap-4 text-sm text-amber-200">

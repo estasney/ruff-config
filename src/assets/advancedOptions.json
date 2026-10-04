@@ -1,0 +1,29 @@
+{
+  "$schema": "./advancedOptions.schema.json",
+  "options": {
+    "ignore-isort-in-init": {
+      "description": "Import order in `__init__.py` can control initialization and avoid circular imports.",
+      "prerequisite": {
+        "kind": "group-selected",
+        "group": "I"
+      },
+      "contribution": {
+        "kind": "per-file-ignores",
+        "glob": "**/__init__.py",
+        "selectors": ["I"]
+      }
+    },
+    "ignore-namespace-package-in-tests": {
+      "description": "Test directories often have no `__init__.py`.",
+      "prerequisite": {
+        "kind": "group-selected",
+        "group": "INP"
+      },
+      "contribution": {
+        "kind": "per-file-ignores",
+        "glob": "tests/**",
+        "selectors": ["INP001"]
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@ ASSETS := src/assets
 VERSION_TARGETS := version-patch version-minor version-major
 
 .DEFAULT_GOAL := help
-.PHONY: help assets build check-clean $(VERSION_TARGETS)
+.PHONY: help assets schema build check-clean $(VERSION_TARGETS)
 
 # Show this help.
 help:
@@ -15,8 +15,12 @@ assets:
 	ruff version --output-format json | jq '{version}' > $(ASSETS)/ruffVersion.json
 	git add src/assets
 
+# Regenerate the advanced-options JSON Schema from its Zod model.
+schema:
+	node scripts/writeAdvancedOptionsSchema.ts
+
 # Type-check and build the single-file page into docs/.
-build: assets
+build: assets schema
 	npm run build
 	git add docs
 

@@ -106,11 +106,11 @@ const parseAsset = <T>(path: string, schema: z.ZodType<T>): T => {
   return parsed.data;
 };
 
-const loadRuleset = (): string => {
+export const loadRuleset = (): TRuleset => {
   const rules = parseAsset(RULES_PATH, ruffRuleListSchema);
   const linters = parseAsset(LINTERS_PATH, ruffLinterListSchema);
   const { version } = JSON.parse(readFileSync(VERSION_PATH, 'utf8')) as { version: string };
-  return `export default ${JSON.stringify(buildRuleset(rules, linters, version))}`;
+  return buildRuleset(rules, linters, version);
 };
 
 export const ruffRules = (): Plugin => ({
@@ -123,6 +123,6 @@ export const ruffRules = (): Plugin => ({
     this.addWatchFile(RULES_PATH);
     this.addWatchFile(LINTERS_PATH);
     this.addWatchFile(VERSION_PATH);
-    return loadRuleset();
+    return `export default ${JSON.stringify(loadRuleset())}`;
   },
 });

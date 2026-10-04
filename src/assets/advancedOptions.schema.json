@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema path"
+    },
+    "options": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "description": "kebab-case id"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "UI explanation"
+          },
+          "prerequisite": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "group-selected"
+                    ]
+                  },
+                  "group": {
+                    "type": "string",
+                    "description": "rule group selector"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "group"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "description": "condition for the option to apply"
+          },
+          "contribution": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "per-file-ignores"
+                    ]
+                  },
+                  "glob": {
+                    "type": "string",
+                    "description": "file glob"
+                  },
+                  "selectors": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "rule selectors"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "glob",
+                  "selectors"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "description": "addition to the generated config"
+          }
+        },
+        "required": [
+          "description",
+          "prerequisite",
+          "contribution"
+        ],
+        "additionalProperties": false
+      },
+      "description": "in display order"
+    }
+  },
+  "required": [
+    "$schema",
+    "options"
+  ],
+  "additionalProperties": false
+}

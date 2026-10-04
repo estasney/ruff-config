@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import {fileURLToPath} from "node:url";
 import { viteSingleFile } from "vite-plugin-singlefile";
 
+import { advancedOptions } from "./plugins/advancedOptions";
 import { ruffRules } from "./plugins/ruffRules";
 
 const buildDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
@@ -13,7 +14,7 @@ export default defineConfig({
   define: {
     __BUILD_DATE__: JSON.stringify(buildDate),
   },
-  plugins: [react(), ruffRules(), viteSingleFile()],
+  plugins: [react(), ruffRules(), advancedOptions(), viteSingleFile()],
   assetsInclude: ["./src/assets/**"],
   resolve: {
     alias: {
