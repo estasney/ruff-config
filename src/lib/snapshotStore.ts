@@ -39,6 +39,7 @@ const withStore = async <T,>(
     });
 };
 
+// Resolves undefined when no snapshot is stored.
 export const readStoredSnapshot = (): Promise<unknown> =>
     withStore<unknown>('readonly', (store) => store.get(SNAPSHOT_KEY));
 

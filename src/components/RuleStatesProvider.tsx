@@ -35,16 +35,14 @@ const readLegacyStates = (): TRuleStates | null => {
 };
 
 const loadHydratedStates = async (): Promise<IHydratedStates> => {
-    let raw: unknown = null;
-    try {
-        raw = await readStoredSnapshot();
-    } catch (error) {
-        console.error('Failed to read stored snapshot:', error);
+    const stored = await readStoredSnapshot();
+    if (stored !== undefined) {
+        const snapshot = parseSnapshot(stored);
+        if (!snapshot) throw new Error('Stored snapshot does not match the current schema');
+        return reconcileSnapshot(groups, snapshot, ruffVersion);
     }
 
-    const snapshot = parseSnapshot(raw);
-    if (snapshot) return reconcileSnapshot(groups, snapshot, ruffVersion);
-
+    // IndexedDB is empty, so importing the legacy record cannot overwrite a snapshot.
     const legacyStates = readLegacyStates();
     if (!legacyStates) return {states: {}, droppedCodes: []};
 
@@ -98,12 +96,14 @@ const HydratedRuleStatesProvider = ({hydrated, children}: IHydratedProviderProps
     }, []);
 
     useEffect(() => {
+        // Persist only user edits; hydrated states may stand in for a snapshot this build cannot read.
+        if (ruleStates === hydrated.states) return;
         pendingSnapshotRef.current = makeSnapshot(ruffVersion, ruleStates);
         const timer = window.setTimeout(flushPendingSnapshot, PERSIST_DEBOUNCE_MS);
         return () => {
             window.clearTimeout(timer);
         };
-    }, [ruleStates, flushPendingSnapshot]);
+    }, [ruleStates, hydrated.states, flushPendingSnapshot]);
 
     useEffect(() => {
         const onVisibilityChange = () => {

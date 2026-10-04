@@ -50,7 +50,7 @@ export const RuffConfigurator = () => {
     return (
         <div className="min-h-screen bg-gray-900 p-4">
             <div className="max-w-6xl mx-auto">
-                <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-4">
+                <div className="bg-gray-800 rounded-t-lg shadow-lg p-6">
                     <div className="flex items-baseline gap-3 mb-2">
                         <h1 className="text-2xl font-bold text-gray-100">Ruff Rules Configurator</h1>
                         <span className="text-sm text-gray-400">ruff {ruffVersion}</span>
